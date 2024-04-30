@@ -18,6 +18,12 @@ import java.util.Properties;
 public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Clearing credentials...");
+            LoginView.clearCredentials();
+            System.out.println("Credentials cleared");
+        }));
     }
 
     @Override
