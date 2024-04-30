@@ -10,6 +10,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 public class LoginView {
     private final GridPane contentPane;
@@ -21,9 +22,10 @@ public class LoginView {
     private final PasswordField imapPasswordField;
     private final TextField imapHostField;
     private final ComboBox<Integer> imapPortField;
-    private final Button loginButton;
 
     public LoginView() {
+        int line = 0;
+
         contentPane = new GridPane();
         contentPane.setAlignment(Pos.CENTER);
         contentPane.setHgap(10);
@@ -32,56 +34,56 @@ public class LoginView {
 
         Text titleText = new Text("Login");
         titleText.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        contentPane.add(titleText, 0, 0, 2, 1);
+        contentPane.add(titleText, 0, line++, 2, 1);
 
         Text smtpTitle = new Text("SMTP Server");
         smtpTitle.setFont(Font.font("Arial", FontWeight.NORMAL, 20));
-        contentPane.add(smtpTitle, 0, 1, 2, 1);
+        contentPane.add(smtpTitle, 0, line++, 2, 1);
 
-        contentPane.add(new Label("Username:"), 0, 2); // is it bad practice to init without a reference? eh, saves quite a few lines in this otherwise very ugly function
+        contentPane.add(new Label("Username:"), 0, line); // is it bad practice to init without a reference? eh, saves quite a few lines in this otherwise very ugly function
         smtpUsernameField = new TextField();
-        contentPane.add(smtpUsernameField, 1, 2);
+        contentPane.add(smtpUsernameField, 1, line++);
 
-        contentPane.add(new Label("Password:"), 0, 3);
+        contentPane.add(new Label("Password:"), 0, line);
         smtpPasswordField = new PasswordField();
-        contentPane.add(smtpPasswordField, 1, 3);
+        contentPane.add(smtpPasswordField, 1, line++);
 
-        contentPane.add(new Label("Host:"), 0, 4);
+        contentPane.add(new Label("Host:"), 0, line);
         smtpHostField = new TextField();
-        contentPane.add(smtpHostField, 1, 4);
+        contentPane.add(smtpHostField, 1, line++);
 
-        contentPane.add(new Label("Port:"), 0, 5);
+        contentPane.add(new Label("Port:"), 0, line);
         smtpPortField = new ComboBox<>();
         smtpPortField.getItems().addAll(25, 465, 587);
         smtpPortField.setValue(465);
-        contentPane.add(smtpPortField, 1, 5);
+        contentPane.add(smtpPortField, 1, line++);
 
         Text imapTitle = new Text("IMAP Server");
         imapTitle.setFont(Font.font("Arial", FontWeight.NORMAL, 20));
-        contentPane.add(imapTitle, 0, 6, 2, 1);
+        contentPane.add(imapTitle, 0, line++, 2, 1);
 
-        contentPane.add(new Label("Username:"), 0, 7);
+        contentPane.add(new Label("Username:"), 0, line);
         imapUsernameField = new TextField();
-        contentPane.add(imapUsernameField, 1, 7);
+        contentPane.add(imapUsernameField, 1, line++);
 
-        contentPane.add(new Label("Password:"), 0, 8);
+        contentPane.add(new Label("Password:"), 0, line);
         imapPasswordField = new PasswordField();
-        contentPane.add(imapPasswordField, 1, 8);
+        contentPane.add(imapPasswordField, 1, line++);
 
-        contentPane.add(new Label("Host:"), 0, 9);
+        contentPane.add(new Label("Host:"), 0, line);
         imapHostField = new TextField();
-        contentPane.add(imapHostField, 1, 9);
+        contentPane.add(imapHostField, 1, line++);
 
-        contentPane.add(new Label("Port:"), 0, 10);
+        contentPane.add(new Label("Port:"), 0, line);
         imapPortField = new ComboBox<>();
         imapPortField.getItems().addAll(143, 993);
         imapPortField.setValue(993);
-        contentPane.add(imapPortField, 1, 10);
+        contentPane.add(imapPortField, 1, line++);
 
-        contentPane.add(new Separator(), 0, 11, 2, 1);
+        contentPane.add(new Separator(), 0, line++, 2, 1);
 
-        loginButton = new Button("Login");
-        contentPane.add(loginButton, 0, 12, 2, 1);
+        Button loginButton = new Button("Login");
+        contentPane.add(loginButton, 0, line++, 2, 1);
         loginButton.setOnAction(e -> login());
     }
 
