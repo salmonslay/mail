@@ -62,7 +62,7 @@ public class LoginView implements SofView {
 
         contentPane.add(new Label("Port:"), 0, line);
         smtpPortField = new ComboBox<>();
-        smtpPortField.getItems().addAll(25, 465, 587);
+        smtpPortField.getItems().addAll(465, 587);
         smtpPortField.setValue(prefs.getInt("smtpPort", 465));
         contentPane.add(smtpPortField, 1, line++);
 

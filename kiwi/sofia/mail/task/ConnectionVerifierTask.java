@@ -35,16 +35,22 @@ public class ConnectionVerifierTask extends Task<Void> {
         updateMessage("Verifying SMTP connection...");
 
         try {
-            Properties props = new Properties();
             String username = prefs.get("smtpUsername", "");
             String password = prefs.get("smtpPassword", "");
             String host = prefs.get("smtpHost", "smtp.gmail.com");
             int port = prefs.getInt("smtpPort", 465);
 
+            Properties props = new Properties();
             props.put("mail.smtp.timeout", "5000");
             props.put("mail.smtp.connectiontimeout", "5000");
-            props.put("mail.smtp.ssl.enable", "true");
-            props.put("mail.smtp.auth", "true");
+
+            if (port == 465)
+                props.put("mail.smtp.ssl.enable", "true");
+            else if (port == 587)
+                props.put("mail.smtp.starttls.enable", "true");
+
+            if (!password.isBlank())
+                props.put("mail.smtp.auth", "true");
 
             props.put("mail.smtp.host", host);
             props.put("mail.smtp.port", port);
