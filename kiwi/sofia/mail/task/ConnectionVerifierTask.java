@@ -4,6 +4,8 @@ import javafx.concurrent.Task;
 import kiwi.sofia.mail.view.LoginView;
 
 import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
@@ -11,7 +13,7 @@ public class ConnectionVerifierTask extends Task<Void> {
 
     @Override
     protected Void call() {
-        if (!verifySmtp()) {
+        if (verifySmtp() == null) {
             throw new RuntimeException("SMTP connection failed");
         }
 
@@ -27,10 +29,10 @@ public class ConnectionVerifierTask extends Task<Void> {
     /**
      * Checks if the SMTP credentials are correct by trying to connect to the SMTP server.
      *
-     * @return true if the SMTP connection was successful, false otherwise
+     * @return the session if the SMTP connection was successful, null otherwise
      * @see <a href="https://stackoverflow.com/a/3060866/11420970/">Source</a>
      */
-    private boolean verifySmtp() {
+    private Session verifySmtp() {
         Preferences prefs = Preferences.userNodeForPackage(LoginView.class);
         updateMessage("Verifying SMTP connection...");
 
@@ -55,23 +57,30 @@ public class ConnectionVerifierTask extends Task<Void> {
             props.put("mail.smtp.host", host);
             props.put("mail.smtp.port", port);
 
-            Session session = Session.getInstance(props, null);
+            Session session = Session.getInstance(props, !password.isBlank() ?
+                    new Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new PasswordAuthentication(username, password);
+                        }
+                    } : null); // null authenticator if no password is provided
+
             Transport transport = session.getTransport("smtp");
             transport.connect(username, password);
             transport.close();
 
             System.out.printf("SMTP connection to %s successful\n", host);
-            return true;
+            return session;
         } catch (AuthenticationFailedException e) {
-            updateMessage("SMTP authentication failed - incorrect username or password");
+            updateMessage("SMTP authentication failed - " + e.getMessage());
         } catch (Exception e) {
             updateMessage("Error connecting to SMTP server");
         }
-        return false;
+        return null;
     }
 
     /**
      * Checks if the IMAP credentials are correct by trying to connect to the IMAP server.
+     * Since Store is an AutoCloseable, we can't return it directly.
      *
      * @return true if the IMAP connection was successful, false otherwise
      */
@@ -88,7 +97,6 @@ public class ConnectionVerifierTask extends Task<Void> {
             Session session = Session.getInstance(properties);
             Store store = session.getStore("imap");
             store.connect(prefs.get("imapUsername", ""), prefs.get("imapPassword", ""));
-            store.close();
 
             System.out.printf("IMAP connection to %s successful\n", prefs.get("imapHost", "imap.gmail.com"));
             return true;
