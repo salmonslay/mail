@@ -1,20 +1,11 @@
+package kiwi.sofia.mail;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import view.LoginView;
-import view.SofView;
-
-import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.util.Properties;
+import kiwi.sofia.mail.view.LoginView;
+import kiwi.sofia.mail.view.SofView;
 
 public class Main extends Application {
     public static void main(String[] args) {

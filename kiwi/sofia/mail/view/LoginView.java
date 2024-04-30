@@ -1,4 +1,4 @@
-package view;
+package kiwi.sofia.mail.view;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -9,7 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import utils.ConnectionVerifierTask;
+import kiwi.sofia.mail.task.ConnectionVerifierTask;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

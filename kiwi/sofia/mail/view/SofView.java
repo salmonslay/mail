@@ -1,4 +1,4 @@
-package view;
+package kiwi.sofia.mail.view;
 
 import javafx.scene.layout.Pane;
 

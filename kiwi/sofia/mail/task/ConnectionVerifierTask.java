@@ -1,7 +1,7 @@
-package utils;
+package kiwi.sofia.mail.task;
 
 import javafx.concurrent.Task;
-import view.LoginView;
+import kiwi.sofia.mail.view.LoginView;
 
 import javax.mail.*;
 import java.util.Properties;
