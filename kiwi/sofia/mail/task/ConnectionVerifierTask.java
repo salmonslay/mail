@@ -36,21 +36,25 @@ public class ConnectionVerifierTask extends Task<Void> {
 
         try {
             Properties props = new Properties();
+            String username = prefs.get("smtpUsername", "");
+            String password = prefs.get("smtpPassword", "");
+            String host = prefs.get("smtpHost", "smtp.gmail.com");
+            int port = prefs.getInt("smtpPort", 465);
 
             props.put("mail.smtp.timeout", "5000");
             props.put("mail.smtp.connectiontimeout", "5000");
             props.put("mail.smtp.ssl.enable", "true");
             props.put("mail.smtp.auth", "true");
 
-            props.put("mail.smtp.host", prefs.get("smtpHost", "smtp.gmail.com"));
-            props.put("mail.smtp.port", prefs.getInt("smtpPort", 465));
+            props.put("mail.smtp.host", host);
+            props.put("mail.smtp.port", port);
 
             Session session = Session.getInstance(props, null);
             Transport transport = session.getTransport("smtp");
-            transport.connect(prefs.get("smtpUsername", ""), prefs.get("smtpPassword", ""));
+            transport.connect(username, password);
             transport.close();
 
-            System.out.printf("SMTP connection to %s successful\n", prefs.get("smtpHost", "smtp.gmail.com"));
+            System.out.printf("SMTP connection to %s successful\n", host);
             return true;
         } catch (AuthenticationFailedException e) {
             updateMessage("SMTP authentication failed - incorrect username or password");
