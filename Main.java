@@ -6,6 +6,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import view.LoginView;
+import view.SofView;
 
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
@@ -28,7 +29,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        LoginView view = new LoginView();
+        SofView view = new LoginView();
         Pane root = view.getView();
         Scene scene = new Scene(root, 800, 600);
         stage.setTitle("Mail");

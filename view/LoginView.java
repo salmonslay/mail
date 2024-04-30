@@ -1,5 +1,6 @@
 package view;
 
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -8,11 +9,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import utils.ConnectionVerifierTask;
 
-import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.prefs.Preferences;
 
-public class LoginView {
+public class LoginView implements SofView {
     private final GridPane contentPane;
     private final TextField smtpUsernameField;
     private final PasswordField smtpPasswordField;
@@ -24,6 +27,8 @@ public class LoginView {
     private final ComboBox<Integer> imapPortField;
     private final CheckBox rememberMe;
     private final Preferences prefs;
+    private final Button loginButton;
+    private final Label statusLabel;
 
     public LoginView() {
         prefs = Preferences.userNodeForPackage(LoginView.class);
@@ -52,7 +57,7 @@ public class LoginView {
         contentPane.add(smtpPasswordField, 1, line++);
 
         contentPane.add(new Label("Host:"), 0, line);
-        smtpHostField = new TextField(prefs.get("smtpHost", ""));
+        smtpHostField = new TextField(prefs.get("smtpHost", "smtp.gmail.com"));
         contentPane.add(smtpHostField, 1, line++);
 
         contentPane.add(new Label("Port:"), 0, line);
@@ -74,7 +79,7 @@ public class LoginView {
         contentPane.add(imapPasswordField, 1, line++);
 
         contentPane.add(new Label("Host:"), 0, line);
-        imapHostField = new TextField(prefs.get("imapHost", ""));
+        imapHostField = new TextField(prefs.get("imapHost", "imap.gmail.com"));
         contentPane.add(imapHostField, 1, line++);
 
         contentPane.add(new Label("Port:"), 0, line);
@@ -90,13 +95,40 @@ public class LoginView {
         rememberMe.setTooltip(new Tooltip("This will not remember your password"));
         contentPane.add(rememberMe, 0, line++, 2, 1);
 
-        Button loginButton = new Button("Login");
+        loginButton = new Button("Login");
         contentPane.add(loginButton, 0, line++, 2, 1);
-        loginButton.setOnAction(e -> login());
+        loginButton.setOnAction(this::login);
+
+        statusLabel = new Label();
+        contentPane.add(statusLabel, 0, line++, 2, 1);
     }
 
-    private void login() {
+    private void login(ActionEvent e) {
         saveCredentials();
+        System.out.println("Logging in...");
+
+        ConnectionVerifierTask verifyTask = new ConnectionVerifierTask();
+        statusLabel.textProperty().bind(verifyTask.messageProperty());
+
+        verifyTask.setOnRunning((successEvent) -> {
+            loginButton.setDisable(true);
+        });
+
+        verifyTask.setOnSucceeded((successEvent) -> {
+            System.out.println("Login successful");
+
+            SofView mailView = new InboxView();
+            contentPane.getScene().setRoot(mailView.getView());
+        });
+
+        verifyTask.setOnFailed((failedEvent) -> {
+            loginButton.setDisable(false);
+            System.out.println("Login failed");
+        });
+
+        ExecutorService smtpExecutor = Executors.newFixedThreadPool(1);
+        smtpExecutor.execute(verifyTask);
+        smtpExecutor.shutdown();
     }
 
     /**
