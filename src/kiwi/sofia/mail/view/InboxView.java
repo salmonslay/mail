@@ -26,6 +26,9 @@ public class InboxView implements SofView {
             listView.setItems(messageObservableList);
             listView.setCellFactory(param -> new EmailCell());
 
+            messageObservableList.add("a");
+            messageObservableList.add("hello hello");
+
             contentPane.getChildren().add(loader.getRoot());
         } catch (Exception e) {
             System.out.println("Failed to load InboxView.fxml" + e.getMessage());

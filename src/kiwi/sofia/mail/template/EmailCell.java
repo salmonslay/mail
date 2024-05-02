@@ -40,7 +40,7 @@ public class EmailCell extends ListCell<String> {
         subjectLabel.setText("Subject looooooooonglooooooooonglooooooooonglooooooooong");
         fromLabel.setText("From");
         dateLabel.setText("27/7");
-        bodyLabel.setText("Body looooooooonglooooooooonglooooooooonglooooooooonglooooooooong");
+        bodyLabel.setText(message);
         setGraphic(gridPane);
         setText(null);
 
