@@ -73,7 +73,7 @@ public class ConnectionVerifierTask extends Task<Void> {
         } catch (AuthenticationFailedException e) {
             updateMessage("SMTP authentication failed - " + e.getMessage());
         } catch (Exception e) {
-            updateMessage("Error connecting to SMTP server");
+            updateMessage("Error connecting to SMTP server: " + e.getMessage());
         }
         return null;
     }
@@ -107,7 +107,7 @@ public class ConnectionVerifierTask extends Task<Void> {
             System.out.printf("IMAP connection to %s successful\n", host);
             return true;
         } catch (Exception e) {
-            updateMessage("Error connecting to IMAP server");
+            updateMessage("Error connecting to IMAP server: " + e.getMessage());
         }
         return false;
     }
