@@ -102,6 +102,7 @@ public class ConnectionVerifierTask extends Task<Void> {
             Session session = Session.getInstance(properties);
             Store store = session.getStore("imap");
             store.connect(username, password);
+            store.close();
 
             System.out.printf("IMAP connection to %s successful\n", host);
             return true;
