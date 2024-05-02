@@ -54,6 +54,7 @@ public class LoginView implements SofView {
 
         contentPane.add(new Label("Password:"), 0, line);
         smtpPasswordField = new PasswordField();
+        smtpPasswordField.setText(prefs.get("smtpPassword", ""));
         contentPane.add(smtpPasswordField, 1, line++);
 
         contentPane.add(new Label("Host:"), 0, line);
@@ -76,6 +77,7 @@ public class LoginView implements SofView {
 
         contentPane.add(new Label("Password:"), 0, line);
         imapPasswordField = new PasswordField();
+        imapPasswordField.setText(prefs.get("imapPassword", ""));
         contentPane.add(imapPasswordField, 1, line++);
 
         contentPane.add(new Label("Host:"), 0, line);
@@ -157,8 +159,8 @@ public class LoginView implements SofView {
      */
     public static void clearCredentials() {
         Preferences prefs = Preferences.userNodeForPackage(LoginView.class);
-        prefs.remove("smtpPassword");
-        prefs.remove("imapPassword");
+//        prefs.remove("smtpPassword"); // TODO: clear these
+//        prefs.remove("imapPassword");
 
         if (prefs.getBoolean("rememberMe", false))
             return;
