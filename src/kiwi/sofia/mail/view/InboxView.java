@@ -2,43 +2,34 @@ package kiwi.sofia.mail.view;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.Initializable;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import kiwi.sofia.mail.template.EmailCell;
 
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
-import java.net.URL;
-import java.util.Properties;
-import java.util.ResourceBundle;
-
 public class InboxView implements SofView {
-    private final GridPane contentPane;
-    private final ListView<String> listView;
+    private final Pane contentPane;
+    @FXML
+    private ListView<String> listView;
     private ObservableList<String> messageObservableList = FXCollections.observableArrayList();
 
     public InboxView() {
         contentPane = new GridPane();
 
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/InboxView.fxml"));
+            loader.setController(this);
+            loader.load();
 
-        messageObservableList.add("UUH");
-        messageObservableList.add("test");
+            listView.setItems(messageObservableList);
+            listView.setCellFactory(param -> new EmailCell());
 
-        listView = new ListView<>();
-        contentPane.add(listView, 0, 0);
-        // max width of listView
-        listView.setMaxWidth(Double.MAX_VALUE);
-
-        listView.setItems(messageObservableList);
-        listView.setCellFactory((lv) -> {
-            return new EmailCell();
-        });
-
-
-        System.out.println("h");
+            contentPane.getChildren().add(loader.getRoot());
+        } catch (Exception e) {
+            System.out.println("Failed to load InboxView.fxml" + e.getMessage());
+        }
     }
 
 

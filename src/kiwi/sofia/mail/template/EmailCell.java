@@ -1,17 +1,10 @@
 package kiwi.sofia.mail.template;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.layout.GridPane;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
-
-import javax.mail.Message;
-import java.io.IOException;
 
 public class EmailCell extends ListCell<String> {
 
