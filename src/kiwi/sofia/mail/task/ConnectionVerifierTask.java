@@ -34,14 +34,14 @@ public class ConnectionVerifierTask extends Task<Void> {
      */
     private Session verifySmtp() {
         Preferences prefs = Preferences.userNodeForPackage(LoginView.class);
+        String username = prefs.get("smtpUsername", "");
+        String password = prefs.get("smtpPassword", "");
+        String host = prefs.get("smtpHost", "smtp.gmail.com");
+        int port = prefs.getInt("smtpPort", 465);
+
         updateMessage("Verifying SMTP connection...");
 
         try {
-            String username = prefs.get("smtpUsername", "");
-            String password = prefs.get("smtpPassword", "");
-            String host = prefs.get("smtpHost", "smtp.gmail.com");
-            int port = prefs.getInt("smtpPort", 465);
-
             Properties props = new Properties();
             props.put("mail.smtp.timeout", "5000");
             props.put("mail.smtp.connectiontimeout", "5000");
@@ -86,19 +86,24 @@ public class ConnectionVerifierTask extends Task<Void> {
      */
     private boolean verifyImap() {
         Preferences prefs = Preferences.userNodeForPackage(LoginView.class);
+        String username = prefs.get("imapUsername", "");
+        String password = prefs.get("imapPassword", "");
+        String host = prefs.get("imapHost", "imap.gmail.com");
+        int port = prefs.getInt("imapPort", 993);
+
         updateMessage("Verifying IMAP connection...");
 
         try {
             Properties properties = new Properties();
-            properties.put("mail.imap.host", prefs.get("imapHost", "imap.gmail.com"));
-            properties.put("mail.imap.port", prefs.getInt("imapPort", 993));
+            properties.put("mail.imap.host", host);
+            properties.put("mail.imap.port", port);
             properties.put("mail.imap.ssl.enable", "true");
 
             Session session = Session.getInstance(properties);
             Store store = session.getStore("imap");
-            store.connect(prefs.get("imapUsername", ""), prefs.get("imapPassword", ""));
+            store.connect(username, password);
 
-            System.out.printf("IMAP connection to %s successful\n", prefs.get("imapHost", "imap.gmail.com"));
+            System.out.printf("IMAP connection to %s successful\n", host);
             return true;
         } catch (Exception e) {
             updateMessage("Error connecting to IMAP server");
