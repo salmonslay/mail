@@ -44,10 +44,10 @@ public class EmailCell extends ListCell<String> {
             }
         }
 
-        subjectLabel.setText("Subject looooooooong");
+        subjectLabel.setText("Subject looooooooonglooooooooonglooooooooonglooooooooong");
         fromLabel.setText("From");
-        //dateLabel.setText("hello");
-        bodyLabel.setText("Body");
+        dateLabel.setText("27/7");
+        bodyLabel.setText("Body looooooooonglooooooooonglooooooooonglooooooooonglooooooooong");
         setGraphic(gridPane);
         setText(null);
 
