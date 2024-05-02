@@ -25,7 +25,9 @@ public class Main extends Application {
         Pane root = view.getView();
         Scene scene = new Scene(root, 800, 600);
         stage.setTitle("Mail");
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
+
     }
 }
