@@ -18,7 +18,7 @@ public class EmailCell extends ListCell<String> {
     private Label bodyLabel;
     @FXML
     private GridPane gridPane;
-    private FXMLLoader mLLoader;
+    private FXMLLoader loader;
 
     @Override
     protected void updateItem(String message, boolean empty) {
@@ -27,12 +27,12 @@ public class EmailCell extends ListCell<String> {
         if (empty)
             return;
 
-        if (mLLoader == null) {
-            mLLoader = new FXMLLoader(getClass().getResource("/fxml/EmailCell.fxml"));
-            mLLoader.setController(this);
+        if (loader == null) {
+            loader = new FXMLLoader(getClass().getResource("/fxml/EmailCell.fxml"));
+            loader.setController(this);
 
             try {
-                mLLoader.load();
+                loader.load();
             } catch (Exception ignored) {
             }
         }
