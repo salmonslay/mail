@@ -6,7 +6,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
 
-public class EmailCell extends ListCell<String> {
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import java.io.IOException;
+
+public class EmailCell extends ListCell<Message> {
 
     @FXML
     private Label subjectLabel;
@@ -21,7 +25,7 @@ public class EmailCell extends ListCell<String> {
     private FXMLLoader loader;
 
     @Override
-    protected void updateItem(String message, boolean empty) {
+    protected void updateItem(Message message, boolean empty) {
         super.updateItem(message, empty);
 
         if (empty)
@@ -36,13 +40,18 @@ public class EmailCell extends ListCell<String> {
             } catch (Exception ignored) {
             }
         }
+        try {
 
-        subjectLabel.setText("Subject looooooooonglooooooooonglooooooooonglooooooooong");
-        fromLabel.setText("From");
-        dateLabel.setText("27/7");
-        bodyLabel.setText(message);
-        setGraphic(gridPane);
-        setText(null);
+            subjectLabel.setText(message.getSubject());
+            fromLabel.setText(message.getFrom()[0].toString());
+
+            dateLabel.setText(message.getSentDate().toString());
+            bodyLabel.setText("body");
+            setGraphic(gridPane);
+            setText(null);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
     }
 }

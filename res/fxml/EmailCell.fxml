@@ -20,7 +20,7 @@
       <Label fx:id="fromLabel" prefHeight="17.0" prefWidth="295.0" text="From " />
       <FlowPane alignment="CENTER_LEFT" columnHalignment="CENTER" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="NEVER">
          <children>
-            <Label fx:id="subjectLabel" alignment="TOP_LEFT" maxWidth="120.0" text="Subject longSubject longSubject longSubject longSubject longSubject longSubject longSubject long">
+            <Label fx:id="subjectLabel" alignment="TOP_LEFT" maxWidth="120.0" prefWidth="120.0" text="Subject longSubject longSubject longSubject longSubject longSubject longSubject longSubject long">
                <padding>
                   <Insets left="10.0" />
                </padding></Label>

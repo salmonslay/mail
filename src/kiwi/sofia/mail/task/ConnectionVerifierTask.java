@@ -1,11 +1,11 @@
 package kiwi.sofia.mail.task;
 
 import javafx.concurrent.Task;
+import kiwi.sofia.mail.common.ImapManager;
+import kiwi.sofia.mail.common.Pair;
 import kiwi.sofia.mail.view.LoginView;
 
 import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
@@ -16,6 +16,7 @@ public class ConnectionVerifierTask extends Task<Void> {
         if (verifySmtp() == null) {
             throw new RuntimeException("SMTP connection failed");
         }
+
 
         if (!verifyImap()) {
             throw new RuntimeException("IMAP connection failed");
@@ -80,35 +81,17 @@ public class ConnectionVerifierTask extends Task<Void> {
 
     /**
      * Checks if the IMAP credentials are correct by trying to connect to the IMAP server.
-     * Since Store is an AutoCloseable, we can't return it directly.
      *
      * @return true if the IMAP connection was successful, false otherwise
      */
     private boolean verifyImap() {
-        Preferences prefs = Preferences.userNodeForPackage(LoginView.class);
-        String username = prefs.get("imapUsername", "");
-        String password = prefs.get("imapPassword", "");
-        String host = prefs.get("imapHost", "imap.gmail.com");
-        int port = prefs.getInt("imapPort", 993);
-
         updateMessage("Verifying IMAP connection...");
-
-        try {
-            Properties properties = new Properties();
-            properties.put("mail.imap.host", host);
-            properties.put("mail.imap.port", port);
-            properties.put("mail.imap.ssl.enable", "true");
-
-            Session session = Session.getInstance(properties);
-            Store store = session.getStore("imap");
-            store.connect(username, password);
-            store.close();
-
-            System.out.printf("IMAP connection to %s successful\n", host);
-            return true;
-        } catch (Exception e) {
-            updateMessage("Error connecting to IMAP server: " + e.getMessage());
+        Pair<Folder, Exception> result = ImapManager.getInboxExc();
+        if (result.getB() != null) {
+            updateMessage("Error connecting to IMAP server: " + result.getB().getMessage());
+            return false;
         }
-        return false;
+
+        return true;
     }
 }
