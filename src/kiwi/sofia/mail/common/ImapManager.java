@@ -3,6 +3,7 @@ package kiwi.sofia.mail.common;
 import kiwi.sofia.mail.view.LoginView;
 
 import javax.mail.Folder;
+import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
 import java.util.Properties;
@@ -16,7 +17,7 @@ public class ImapManager {
      */
     public static Pair<Folder, Exception> getInboxExc() {
         System.out.println("Getting inbox");
-        
+
         Preferences prefs = Preferences.userNodeForPackage(LoginView.class);
         String username = prefs.get("imapUsername", "");
         String password = prefs.get("imapPassword", "");
@@ -36,7 +37,7 @@ public class ImapManager {
             Folder inbox = store.getFolder("INBOX");
             inbox.open(Folder.READ_ONLY);
             return new Pair<>(inbox, null);
-        } catch (Exception e) {
+        } catch (MessagingException e) {
             return new Pair<>(null, e);
         }
     }
