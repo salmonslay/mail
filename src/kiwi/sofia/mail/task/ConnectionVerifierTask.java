@@ -17,7 +17,7 @@ public class ConnectionVerifierTask extends Task<Void> {
             throw new RuntimeException("SMTP connection failed");
         }
 
-
+        // TODO: don't wait for the inbox, only wait for the connection
         if (!verifyImap()) {
             throw new RuntimeException("IMAP connection failed");
         }
