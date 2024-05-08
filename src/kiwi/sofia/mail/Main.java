@@ -29,11 +29,19 @@ public class Main extends Application {
     public void start(Stage stage) {
         SofView view = skipLogin ? new InboxView() : new LoginView();
         Pane root = view.getView();
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 1280, 720);
         stage.setTitle("Mail");
-        stage.setResizable(false);
+//        stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
+
+        stage.widthProperty().addListener((obs, oldVal, newVal) -> {
+            root.setPrefWidth((double) newVal);
+        });
+
+        stage.heightProperty().addListener((obs, oldVal, newVal) -> {
+            root.setPrefHeight((double) newVal);
+        });
 
     }
 }

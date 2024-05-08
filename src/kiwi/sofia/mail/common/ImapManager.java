@@ -1,11 +1,12 @@
 package kiwi.sofia.mail.common;
 
+import jakarta.mail.Folder;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Store;
 import kiwi.sofia.mail.view.LoginView;
 
-import javax.mail.Folder;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Store;
+
 import java.util.Properties;
 import java.util.prefs.Preferences;
 

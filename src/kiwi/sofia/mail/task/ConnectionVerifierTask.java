@@ -1,11 +1,11 @@
 package kiwi.sofia.mail.task;
 
+import jakarta.mail.*;
 import javafx.concurrent.Task;
 import kiwi.sofia.mail.common.ImapManager;
 import kiwi.sofia.mail.common.Pair;
 import kiwi.sofia.mail.view.LoginView;
 
-import javax.mail.*;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 

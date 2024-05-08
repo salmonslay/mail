@@ -1,5 +1,7 @@
 package kiwi.sofia.mail.view;
 
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,7 +12,6 @@ import javafx.scene.layout.Pane;
 import kiwi.sofia.mail.common.ImapManager;
 import kiwi.sofia.mail.template.EmailCell;
 
-import javax.mail.*;
 
 public class InboxView implements SofView {
     private final Pane contentPane;
@@ -42,11 +43,11 @@ public class InboxView implements SofView {
                 reversedMessages[messages.length - i - 1] = messages[i];
             }
 
-            for(int i = 0; i < 10; i++) {
+            for (int i = 0; i < 10; i++) {
                 messageObservableList.add(reversedMessages[i]);
             }
         } catch (Exception e) {
-            System.out.println("Failed to get inbox messages" + e.getMessage());
+            System.out.println("Failed to get inbox messages: " + e.getMessage());
         }
     }
 
