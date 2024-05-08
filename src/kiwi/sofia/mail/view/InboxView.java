@@ -36,7 +36,7 @@ public class InboxView implements SofView {
         }
 
         try {
-            Folder inbox = ImapManager.getInbox();
+            Folder inbox = ImapManager.getCachedInbox();
             Message[] messages = inbox.getMessages();
             Message[] reversedMessages = new Message[messages.length];
             for (int i = 0; i < messages.length; i++) {
