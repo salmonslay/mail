@@ -5,6 +5,7 @@ import javafx.concurrent.Task;
 import kiwi.sofia.mail.common.ConnectionRecord;
 import kiwi.sofia.mail.common.ImapManager;
 import kiwi.sofia.mail.common.Pair;
+import kiwi.sofia.mail.common.PropertiesCreator;
 
 import java.util.Properties;
 
@@ -38,20 +39,7 @@ public class ConnectionVerifierTask extends Task<Void> {
         updateMessage("Verifying SMTP connection...");
 
         try {
-            Properties props = new Properties();
-            props.put("mail.smtp.timeout", "5000");
-            props.put("mail.smtp.connectiontimeout", "5000");
-
-            if (set.port() == 465)
-                props.put("mail.smtp.ssl.enable", "true");
-            else if (set.port() == 587)
-                props.put("mail.smtp.starttls.enable", "true");
-
-            if (!set.password().isBlank())
-                props.put("mail.smtp.auth", "true");
-
-            props.put("mail.smtp.host", set.host());
-            props.put("mail.smtp.port", set.port());
+            Properties props = PropertiesCreator.createSmtpProperties();
 
             Session session = Session.getInstance(props, !set.password().isBlank() ?
                     new Authenticator() {

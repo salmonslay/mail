@@ -21,12 +21,8 @@ public class ImapManager {
         ConnectionRecord set = ConnectionRecord.getImapConnectionSet();
 
         try {
-            Properties properties = new Properties();
-            properties.put("mail.imap.host", set.host());
-            properties.put("mail.imap.port", set.port());
-            properties.put("mail.imap.ssl.enable", "true");
-
-            Session session = Session.getInstance(properties);
+            Properties props = PropertiesCreator.createImapProperties();
+            Session session = Session.getInstance(props);
             Store store = session.getStore("imap");
             store.connect(set.username(), set.password());
 
