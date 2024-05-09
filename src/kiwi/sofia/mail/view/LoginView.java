@@ -9,6 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import kiwi.sofia.mail.common.ConnectionSet;
 import kiwi.sofia.mail.task.ConnectionVerifierTask;
 
 import java.util.concurrent.ExecutorService;
@@ -26,12 +27,13 @@ public class LoginView implements SofView {
     private final TextField imapHostField;
     private final ComboBox<Integer> imapPortField;
     private final CheckBox rememberMe;
-    private final Preferences prefs;
     private final Button loginButton;
     private final Label statusLabel;
 
     public LoginView() {
-        prefs = Preferences.userNodeForPackage(LoginView.class);
+        ConnectionSet smtpSet = ConnectionSet.getSmtpConnectionSet();
+        ConnectionSet imapSet = ConnectionSet.getImapConnectionSet();
+
         int line = 0;
 
         contentPane = new GridPane();
@@ -49,22 +51,22 @@ public class LoginView implements SofView {
         contentPane.add(smtpTitle, 0, line++, 2, 1);
 
         contentPane.add(new Label("Username:"), 0, line); // is it bad practice to init without a reference? eh, saves quite a few lines in this otherwise very ugly function
-        smtpUsernameField = new TextField(prefs.get("smtpUsername", ""));
+        smtpUsernameField = new TextField(smtpSet.getUsername());
         contentPane.add(smtpUsernameField, 1, line++);
 
         contentPane.add(new Label("Password:"), 0, line);
         smtpPasswordField = new PasswordField();
-        smtpPasswordField.setText(prefs.get("smtpPassword", ""));
+        smtpPasswordField.setText(smtpSet.getPassword());
         contentPane.add(smtpPasswordField, 1, line++);
 
         contentPane.add(new Label("Host:"), 0, line);
-        smtpHostField = new TextField(prefs.get("smtpHost", "smtp.gmail.com"));
+        smtpHostField = new TextField(smtpSet.getHost());
         contentPane.add(smtpHostField, 1, line++);
 
         contentPane.add(new Label("Port:"), 0, line);
         smtpPortField = new ComboBox<>();
         smtpPortField.getItems().addAll(465, 587);
-        smtpPortField.setValue(prefs.getInt("smtpPort", 465));
+        smtpPortField.setValue(smtpSet.getPort());
         contentPane.add(smtpPortField, 1, line++);
 
         Text imapTitle = new Text("IMAP Server");
@@ -72,22 +74,22 @@ public class LoginView implements SofView {
         contentPane.add(imapTitle, 0, line++, 2, 1);
 
         contentPane.add(new Label("Username:"), 0, line);
-        imapUsernameField = new TextField(prefs.get("imapUsername", ""));
+        imapUsernameField = new TextField(imapSet.getUsername());
         contentPane.add(imapUsernameField, 1, line++);
 
         contentPane.add(new Label("Password:"), 0, line);
         imapPasswordField = new PasswordField();
-        imapPasswordField.setText(prefs.get("imapPassword", ""));
+        imapPasswordField.setText(imapSet.getPassword());
         contentPane.add(imapPasswordField, 1, line++);
 
         contentPane.add(new Label("Host:"), 0, line);
-        imapHostField = new TextField(prefs.get("imapHost", "imap.gmail.com"));
+        imapHostField = new TextField(imapSet.getHost());
         contentPane.add(imapHostField, 1, line++);
 
         contentPane.add(new Label("Port:"), 0, line);
         imapPortField = new ComboBox<>();
         imapPortField.getItems().addAll(143, 993);
-        imapPortField.setValue(prefs.getInt("imapPort", 993));
+        imapPortField.setValue(imapSet.getPort());
         contentPane.add(imapPortField, 1, line++);
 
         contentPane.add(new Separator(), 0, line++, 2, 1);
@@ -139,6 +141,7 @@ public class LoginView implements SofView {
      * Passwords will always be cleared.
      */
     private void saveCredentials() {
+        Preferences prefs = Preferences.userNodeForPackage(LoginView.class);
         prefs.put("smtpUsername", smtpUsernameField.getText());
         prefs.put("smtpHost", smtpHostField.getText());
         prefs.putInt("smtpPort", smtpPortField.getValue());

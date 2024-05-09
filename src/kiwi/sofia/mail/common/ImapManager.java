@@ -4,11 +4,8 @@ import jakarta.mail.Folder;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.Store;
-import kiwi.sofia.mail.view.LoginView;
-
 
 import java.util.Properties;
-import java.util.prefs.Preferences;
 
 public class ImapManager {
     private static Folder inbox;
@@ -21,23 +18,19 @@ public class ImapManager {
     public static Pair<Folder, Exception> getInboxExc() {
         System.out.println("Getting inbox");
 
-        Preferences prefs = Preferences.userNodeForPackage(LoginView.class);
-        String username = prefs.get("imapUsername", "");
-        String password = prefs.get("imapPassword", "");
-        String host = prefs.get("imapHost", "imap.gmail.com");
-        int port = prefs.getInt("imapPort", 993);
+        ConnectionSet set = ConnectionSet.getImapConnectionSet();
 
         try {
             Properties properties = new Properties();
-            properties.put("mail.imap.host", host);
-            properties.put("mail.imap.port", port);
+            properties.put("mail.imap.host", set.getHost());
+            properties.put("mail.imap.port", set.getPort());
             properties.put("mail.imap.ssl.enable", "true");
 
             Session session = Session.getInstance(properties);
             Store store = session.getStore("imap");
-            store.connect(username, password);
+            store.connect(set.getUsername(), set.getPassword());
 
-            System.out.printf("IMAP connection to %s successful%n", host);
+            System.out.printf("IMAP connection to %s successful\n", set.getHost());
 
             Folder inbox = store.getFolder("INBOX");
             inbox.open(Folder.READ_ONLY);
