@@ -2,7 +2,7 @@ package kiwi.sofia.mail.task;
 
 import jakarta.mail.*;
 import javafx.concurrent.Task;
-import kiwi.sofia.mail.common.ConnectionSet;
+import kiwi.sofia.mail.common.ConnectionRecord;
 import kiwi.sofia.mail.common.ImapManager;
 import kiwi.sofia.mail.common.Pair;
 
@@ -33,7 +33,7 @@ public class ConnectionVerifierTask extends Task<Void> {
      * @see <a href="https://stackoverflow.com/a/3060866/11420970/">Source</a>
      */
     private Session verifySmtp() {
-        ConnectionSet set = ConnectionSet.getSmtpConnectionSet();
+        ConnectionRecord set = ConnectionRecord.getSmtpConnectionSet();
 
         updateMessage("Verifying SMTP connection...");
 
@@ -42,29 +42,29 @@ public class ConnectionVerifierTask extends Task<Void> {
             props.put("mail.smtp.timeout", "5000");
             props.put("mail.smtp.connectiontimeout", "5000");
 
-            if (set.getPort() == 465)
+            if (set.port() == 465)
                 props.put("mail.smtp.ssl.enable", "true");
-            else if (set.getPort() == 587)
+            else if (set.port() == 587)
                 props.put("mail.smtp.starttls.enable", "true");
 
-            if (!set.getPassword().isBlank())
+            if (!set.password().isBlank())
                 props.put("mail.smtp.auth", "true");
 
-            props.put("mail.smtp.host", set.getHost());
-            props.put("mail.smtp.port", set.getPort());
+            props.put("mail.smtp.host", set.host());
+            props.put("mail.smtp.port", set.port());
 
-            Session session = Session.getInstance(props, !set.getPassword().isBlank() ?
+            Session session = Session.getInstance(props, !set.password().isBlank() ?
                     new Authenticator() {
                         protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication(set.getUsername(), set.getPassword());
+                            return new PasswordAuthentication(set.username(), set.password());
                         }
                     } : null); // null authenticator if no password is provided
 
             Transport transport = session.getTransport("smtp");
-            transport.connect(set.getUsername(), set.getPassword());
+            transport.connect(set.username(), set.password());
             transport.close();
 
-            System.out.printf("SMTP connection to %s successful\n", set.getHost());
+            System.out.printf("SMTP connection to %s successful\n", set.host());
             return session;
         } catch (AuthenticationFailedException e) {
             updateMessage("SMTP authentication failed - " + e.getMessage());
