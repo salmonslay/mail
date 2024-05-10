@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import kiwi.sofia.mail.task.FetchEmailsTask;
@@ -22,6 +23,8 @@ public class InboxView implements SofView {
     private final Pane contentPane;
     @FXML
     private ListView<Message> listView;
+    @FXML
+    private BorderPane listPane;
     private ObservableList<Message> messageObservableList = FXCollections.observableArrayList();
 
     private InboxView() {
@@ -71,6 +74,10 @@ public class InboxView implements SofView {
     @Override
     public Pane getView() {
         return contentPane;
+    }
+
+    public BorderPane getListPane() {
+        return listPane;
     }
 
     @Override

@@ -1,11 +1,16 @@
 package kiwi.sofia.mail.template;
 
 import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
+import kiwi.sofia.mail.view.EmailView;
+import kiwi.sofia.mail.view.InboxView;
 
 
 import java.io.IOException;
@@ -23,6 +28,7 @@ public class EmailCell extends ListCell<Message> {
     @FXML
     private GridPane gridPane;
     private FXMLLoader loader;
+    private Message message;
 
     @Override
     protected void updateItem(Message message, boolean empty) {
@@ -41,6 +47,7 @@ public class EmailCell extends ListCell<Message> {
             }
         }
         try {
+            this.message = message;
 
             subjectLabel.setText(message.getSubject());
             fromLabel.setText(message.getFrom()[0].toString());
@@ -53,5 +60,16 @@ public class EmailCell extends ListCell<Message> {
             System.out.println(e.getMessage());
         }
 
+    }
+
+    @FXML
+    protected void openEmail() {
+        try {
+            System.out.printf("Opening email with subject: %s\n", message.getSubject());
+            InboxView.getInstance().getListPane().setCenter(new EmailView(message).getView());
+
+        } catch (MessagingException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

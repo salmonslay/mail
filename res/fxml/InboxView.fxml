@@ -81,7 +81,7 @@
         </Menu>
       </menus>
     </MenuBar>
-      <BorderPane VBox.vgrow="ALWAYS">
+      <BorderPane fx:id="listPane" VBox.vgrow="ALWAYS">
          <center>
             <ListView fx:id="listView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
          </center>
