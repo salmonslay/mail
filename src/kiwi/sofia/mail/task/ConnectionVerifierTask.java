@@ -69,7 +69,7 @@ public class ConnectionVerifierTask extends Task<Void> {
      */
     private boolean verifyImap() {
         updateMessage("Verifying IMAP connection...");
-        Pair<Folder, Exception> result = ImapManager.getInboxExc();
+        Pair<Store, Exception> result = ImapManager.getStoreExc();
         if (result.getB() != null) {
             updateMessage("Error connecting to IMAP server: " + result.getB().getMessage());
             return false;

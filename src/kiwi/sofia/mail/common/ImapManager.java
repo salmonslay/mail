@@ -1,9 +1,6 @@
 package kiwi.sofia.mail.common;
 
-import jakarta.mail.Folder;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Session;
-import jakarta.mail.Store;
+import jakarta.mail.*;
 
 import java.util.Properties;
 
@@ -18,9 +15,24 @@ public class ImapManager {
     public static Pair<Folder, Exception> getInboxExc() {
         System.out.println("Getting inbox");
 
-        ConnectionRecord set = ConnectionRecord.getImapConnectionSet();
+        try {
+            Store store = getStoreExc().getA();
+
+            Folder inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
+            ImapManager.inbox = inbox;
+            return new Pair<>(inbox, null);
+        } catch (MessagingException e) {
+            return new Pair<>(null, e);
+        }
+    }
+
+    public static Pair<Store, Exception> getStoreExc() {
+        System.out.println("Getting store");
 
         try {
+            ConnectionRecord set = ConnectionRecord.getImapConnectionSet();
+
             Properties props = PropertiesCreator.createImapProperties();
             Session session = Session.getInstance(props);
             Store store = session.getStore("imap");
@@ -28,10 +40,7 @@ public class ImapManager {
 
             System.out.printf("IMAP connection to %s successful\n", set.host());
 
-            Folder inbox = store.getFolder("INBOX");
-            inbox.open(Folder.READ_ONLY);
-            ImapManager.inbox = inbox;
-            return new Pair<>(inbox, null);
+            return new Pair<>(store, null);
         } catch (MessagingException e) {
             return new Pair<>(null, e);
         }
