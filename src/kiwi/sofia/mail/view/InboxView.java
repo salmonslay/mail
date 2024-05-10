@@ -1,6 +1,5 @@
 package kiwi.sofia.mail.view;
 
-import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,7 +8,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import kiwi.sofia.mail.common.ImapManager;
 import kiwi.sofia.mail.task.FetchEmailsTask;
 import kiwi.sofia.mail.template.EmailCell;
 
