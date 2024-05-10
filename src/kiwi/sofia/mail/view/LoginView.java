@@ -121,7 +121,7 @@ public class LoginView implements SofView {
         verifyTask.setOnSucceeded((successEvent) -> {
             System.out.println("Login successful");
 
-            SofView mailView = new InboxView();
+            SofView mailView = InboxView.getInstance();
             contentPane.getScene().setRoot(mailView.getView());
         });
 

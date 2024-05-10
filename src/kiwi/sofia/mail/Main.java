@@ -27,7 +27,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        SofView view = skipLogin ? new InboxView() : new LoginView();
+        SofView view = skipLogin ? InboxView.getInstance() : new LoginView();
         Pane root = view.getView();
         Scene scene = new Scene(root, 1280, 720);
         stage.setTitle("Mail");

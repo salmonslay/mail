@@ -18,12 +18,13 @@ import java.util.concurrent.Executors;
 
 
 public class InboxView implements SofView {
+    private static InboxView instance;
     private final Pane contentPane;
     @FXML
     private ListView<Message> listView;
     private ObservableList<Message> messageObservableList = FXCollections.observableArrayList();
 
-    public InboxView() {
+    private InboxView() {
         contentPane = new GridPane();
 
         try {
@@ -75,5 +76,12 @@ public class InboxView implements SofView {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         fetchEmails();
+    }
+
+    public static InboxView getInstance() {
+        if (instance == null)
+            instance = new InboxView();
+
+        return instance;
     }
 }
