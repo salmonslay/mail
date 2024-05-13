@@ -48,6 +48,9 @@
                </BorderPane.margin>
             </Button>
          </left>
+         <center>
+            <Label fx:id="pageLabel" text="Label" BorderPane.alignment="CENTER" />
+         </center>
       </BorderPane>
    </bottom>
 </BorderPane>

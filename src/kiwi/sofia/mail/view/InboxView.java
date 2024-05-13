@@ -14,11 +14,13 @@ import kiwi.sofia.mail.task.FetchEmailsTask;
 import kiwi.sofia.mail.template.EmailCell;
 
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
+@SuppressWarnings("ManualArrayToCollectionCopy")
 public class InboxView implements SofView {
     private static InboxView instance;
     @FXML
@@ -33,6 +35,8 @@ public class InboxView implements SofView {
     private Button buttonRight;
     @FXML
     private Button buttonLeft;
+    @FXML
+    private Label pageLabel;
     private ObservableList<Message> messageObservableList = FXCollections.observableArrayList();
 
     private InboxView() {
@@ -50,6 +54,7 @@ public class InboxView implements SofView {
 
     protected void fetchEmails() {
         buttonLeft.setDisable(true);
+        pageLabel.setText("...");
 
         FetchEmailsTask fetchEmailsTask = new FetchEmailsTask();
 
@@ -70,6 +75,8 @@ public class InboxView implements SofView {
             for (int i = 0; i < 50; i++) {
                 messageObservableList.add(reversedMessages[i]);
             }
+
+            pageLabel.setText(MessageFormat.format("Page 1/{0} ({1} emails)", messages.length / 50 + 1, messages.length));
         });
 
         fetchEmailsTask.setOnFailed(event -> {
@@ -94,8 +101,7 @@ public class InboxView implements SofView {
     }
 
     public static InboxView getInstance() {
-        if (instance == null)
-            instance = new InboxView();
+        if (instance == null) instance = new InboxView();
 
         return instance;
     }
