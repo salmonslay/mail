@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import kiwi.sofia.mail.view.ClientView;
 import kiwi.sofia.mail.view.InboxView;
 import kiwi.sofia.mail.view.LoginView;
 import kiwi.sofia.mail.view.SofView;
@@ -27,7 +28,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        SofView view = skipLogin ? InboxView.getInstance() : new LoginView();
+        SofView view = skipLogin ? ClientView.getInstance() : new LoginView();
         Pane root = view.getView();
         Scene scene = new Scene(root, 1280, 720);
         stage.setTitle("Mail");

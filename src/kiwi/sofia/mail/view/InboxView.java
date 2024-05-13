@@ -10,6 +10,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import kiwi.sofia.mail.task.FetchEmailsTask;
 import kiwi.sofia.mail.template.EmailCell;
 
@@ -21,18 +22,15 @@ import java.util.concurrent.Executors;
 
 public class InboxView implements SofView {
     private static InboxView instance;
-    private final Pane contentPane;
     @FXML
     private ListView<Message> listView;
     @FXML
-    private BorderPane listPane;
+    private StackPane stackPane;
     @FXML
     private Label statusLabel;
     private ObservableList<Message> messageObservableList = FXCollections.observableArrayList();
 
     private InboxView() {
-        contentPane = new GridPane();
-
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/InboxView.fxml"));
             loader.setController(this);
@@ -40,8 +38,6 @@ public class InboxView implements SofView {
 
             listView.setItems(messageObservableList);
             listView.setCellFactory(param -> new EmailCell());
-
-            contentPane.getChildren().add(loader.getRoot());
         } catch (Exception e) {
             System.out.println("Failed to load InboxView.fxml" + e.getMessage());
         }
@@ -80,14 +76,9 @@ public class InboxView implements SofView {
         executorService.shutdown();
     }
 
-
     @Override
     public Pane getView() {
-        return contentPane;
-    }
-
-    public BorderPane getListPane() {
-        return listPane;
+        return stackPane;
     }
 
     @Override

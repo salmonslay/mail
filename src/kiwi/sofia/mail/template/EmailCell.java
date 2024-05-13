@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
+import kiwi.sofia.mail.view.ClientView;
 import kiwi.sofia.mail.view.EmailView;
 import kiwi.sofia.mail.view.InboxView;
 
@@ -66,8 +67,8 @@ public class EmailCell extends ListCell<Message> {
     protected void openEmail() {
         try {
             System.out.printf("Opening email with subject: %s\n", message.getSubject());
-            InboxView.getInstance().getListPane().setCenter(new EmailView(message).getView());
 
+            ClientView.getInstance().getBorderPane().setCenter(new EmailView(message).getView());
         } catch (MessagingException e) {
             System.out.println(e.getMessage());
         }
