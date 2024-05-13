@@ -8,6 +8,7 @@ import kiwi.sofia.mail.common.ImapManager;
 public class FetchEmailsTask extends Task<Message[]> {
     @Override
     protected Message[] call() throws Exception {
+        updateMessage("Fetching emails...");
         return ImapManager.getCachedInbox().getMessages();
     }
 }

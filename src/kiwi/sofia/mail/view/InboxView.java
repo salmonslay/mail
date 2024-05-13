@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -25,6 +26,8 @@ public class InboxView implements SofView {
     private ListView<Message> listView;
     @FXML
     private BorderPane listPane;
+    @FXML
+    private Label statusLabel;
     private ObservableList<Message> messageObservableList = FXCollections.observableArrayList();
 
     private InboxView() {
@@ -47,7 +50,12 @@ public class InboxView implements SofView {
     protected void fetchEmails() {
         FetchEmailsTask fetchEmailsTask = new FetchEmailsTask();
 
+        statusLabel.textProperty().bind(fetchEmailsTask.messageProperty());
+
         fetchEmailsTask.setOnSucceeded(event -> {
+            statusLabel.textProperty().unbind();
+            statusLabel.setText("");
+
             Message[] messages = fetchEmailsTask.getValue();
             Message[] reversedMessages = new Message[messages.length];
             for (int i = 0; i < messages.length; i++) {
@@ -62,6 +70,8 @@ public class InboxView implements SofView {
         });
 
         fetchEmailsTask.setOnFailed(event -> {
+            statusLabel.textProperty().unbind();
+            statusLabel.setText("Could not fetch emails.\n" + fetchEmailsTask.getException().getMessage());
             System.out.println("Failed to fetch emails: " + fetchEmailsTask.getException().getMessage());
         });
 
