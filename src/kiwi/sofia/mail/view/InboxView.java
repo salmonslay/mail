@@ -158,7 +158,6 @@ public class InboxView implements SofView {
 
         FetchProfile fetchProfile = new FetchProfile();
         fetchProfile.add(FetchProfile.Item.ENVELOPE);
-        fetchProfile.add(FetchProfile.Item.CONTENT_INFO);
 
         try {
             ImapManager.getCachedInbox().fetch(messages, fetchProfile);
