@@ -2,19 +2,13 @@ package kiwi.sofia.mail.template;
 
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
 import kiwi.sofia.mail.view.ClientView;
 import kiwi.sofia.mail.view.EmailView;
-import kiwi.sofia.mail.view.InboxView;
-
-
-import java.io.IOException;
 
 public class EmailCell extends ListCell<Message> {
 

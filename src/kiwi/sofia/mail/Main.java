@@ -5,7 +5,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import kiwi.sofia.mail.view.ClientView;
-import kiwi.sofia.mail.view.InboxView;
 import kiwi.sofia.mail.view.LoginView;
 import kiwi.sofia.mail.view.SofView;
 

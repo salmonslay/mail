@@ -5,7 +5,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import kiwi.sofia.mail.template.EmailCell;
 
 public class ClientView implements SofView {
     private static ClientView instance;
