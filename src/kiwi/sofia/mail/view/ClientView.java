@@ -2,6 +2,7 @@ package kiwi.sofia.mail.view;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import kiwi.sofia.mail.template.EmailCell;
@@ -33,6 +34,10 @@ public class ClientView implements SofView {
 
     public BorderPane getBorderPane() {
         return borderPane;
+    }
+
+    public static void setCenter(Node node) {
+        getInstance().getBorderPane().setCenter(node);
     }
 
     public static ClientView getInstance() {
