@@ -1,13 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import org.kordamp.ikonli.javafx.StackedFontIcon?>
 
-
-<StackPane fx:id="stackPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <ListView fx:id="listView" prefHeight="200.0" prefWidth="200.0" />
-      <Label fx:id="statusLabel" text="Label" />
-   </children>
-</StackPane>
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <StackPane fx:id="stackPane">
+         <children>
+            <ListView fx:id="listView" prefHeight="200.0" prefWidth="200.0" />
+            <Label fx:id="statusLabel" text="Label" />
+         </children>
+      </StackPane>
+   </center>
+   <bottom>
+      <BorderPane prefHeight="32.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <right>
+            <Button fx:id="buttonRight" mnemonicParsing="false" onAction="#changePageRight" BorderPane.alignment="CENTER">
+               <graphic>
+                  <StackedFontIcon>
+                     <children>
+                        <FontIcon iconLiteral="fa-arrow-right" />
+                     </children>
+                  </StackedFontIcon>
+               </graphic>
+               <BorderPane.margin>
+                  <Insets right="15.0" />
+               </BorderPane.margin>
+            </Button>
+         </right>
+         <left>
+            <Button fx:id="buttonLeft" mnemonicParsing="false" onAction="#changePageLeft" BorderPane.alignment="CENTER">
+               <graphic>
+                  <StackedFontIcon>
+                     <children>
+                        <FontIcon iconLiteral="fa-arrow-left" />
+                     </children>
+                  </StackedFontIcon>
+               </graphic>
+               <BorderPane.margin>
+                  <Insets left="15.0" />
+               </BorderPane.margin>
+            </Button>
+         </left>
+      </BorderPane>
+   </bottom>
+</BorderPane>

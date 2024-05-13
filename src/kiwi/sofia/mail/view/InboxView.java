@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
@@ -25,7 +26,13 @@ public class InboxView implements SofView {
     @FXML
     private StackPane stackPane;
     @FXML
+    private Pane rootPane;
+    @FXML
     private Label statusLabel;
+    @FXML
+    private Button buttonRight;
+    @FXML
+    private Button buttonLeft;
     private ObservableList<Message> messageObservableList = FXCollections.observableArrayList();
 
     private InboxView() {
@@ -42,6 +49,8 @@ public class InboxView implements SofView {
     }
 
     protected void fetchEmails() {
+        buttonLeft.setDisable(true);
+
         FetchEmailsTask fetchEmailsTask = new FetchEmailsTask();
 
         statusLabel.textProperty().bind(fetchEmailsTask.messageProperty());
@@ -58,7 +67,7 @@ public class InboxView implements SofView {
 
             messageObservableList.clear();
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 50; i++) {
                 messageObservableList.add(reversedMessages[i]);
             }
         });
@@ -76,7 +85,7 @@ public class InboxView implements SofView {
 
     @Override
     public Pane getView() {
-        return stackPane;
+        return rootPane;
     }
 
     @Override
@@ -89,5 +98,15 @@ public class InboxView implements SofView {
             instance = new InboxView();
 
         return instance;
+    }
+
+    @FXML
+    public void changePageLeft() {
+        System.out.println("Changing page left");
+    }
+
+    @FXML
+    public void changePageRight() {
+        System.out.println("Changing page right");
     }
 }
