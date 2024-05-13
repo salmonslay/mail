@@ -15,12 +15,12 @@ import kiwi.sofia.mail.template.EmailCell;
 
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-@SuppressWarnings("ManualArrayToCollectionCopy")
 public class InboxView implements SofView {
     private static InboxView instance;
     @FXML
@@ -38,6 +38,8 @@ public class InboxView implements SofView {
     @FXML
     private Label pageLabel;
     private ObservableList<Message> messageObservableList = FXCollections.observableArrayList();
+    private Message[] messages;
+    private int currentPage = 0;
 
     private InboxView() {
         try {
@@ -69,14 +71,10 @@ public class InboxView implements SofView {
             for (int i = 0; i < messages.length; i++) {
                 reversedMessages[messages.length - i - 1] = messages[i];
             }
+            this.messages = reversedMessages;
 
-            messageObservableList.clear();
-
-            for (int i = 0; i < 50; i++) {
-                messageObservableList.add(reversedMessages[i]);
-            }
-
-            pageLabel.setText(MessageFormat.format("Page 1/{0} ({1} emails)", messages.length / 50 + 1, messages.length));
+            currentPage = 0;
+            refreshPage();
         });
 
         fetchEmailsTask.setOnFailed(event -> {
@@ -106,13 +104,65 @@ public class InboxView implements SofView {
         return instance;
     }
 
+    /**
+     * Changes the page to the left. If the current page is the first page, the button is disabled.
+     */
     @FXML
     public void changePageLeft() {
         System.out.println("Changing page left");
+
+        currentPage--;
+        if (currentPage <= 0) {
+            currentPage = 0;
+            buttonLeft.setDisable(true);
+        } else {
+            buttonLeft.setDisable(false);
+        }
+
+        buttonRight.setDisable(false);
+
+        refreshPage();
     }
 
+    /**
+     * Changes the page to the right. If the current page is the last page, the button is disabled.
+     */
     @FXML
     public void changePageRight() {
         System.out.println("Changing page right");
+
+        currentPage++;
+        if (currentPage >= messages.length / 50) {
+            currentPage = messages.length / 50;
+            buttonRight.setDisable(true);
+        } else {
+            buttonRight.setDisable(false);
+        }
+
+        buttonLeft.setDisable(false);
+
+        refreshPage();
+    }
+
+    /**
+     * Refreshes the page with emails from the current page number.
+     */
+    private void refreshPage() {
+        messageObservableList.clear();
+        int firstIndex = currentPage * 50;
+        int lastIndex = Math.min((currentPage + 1) * 50, messages.length);
+        messageObservableList.addAll(Arrays.asList(messages).subList(firstIndex, lastIndex));
+
+        updatePageLabel();
+    }
+
+    /**
+     * Updates the page label with the current email range in the format "51 - 100 of 1323"
+     */
+    private void updatePageLabel() {
+        pageLabel.setText(MessageFormat.format("{0} - {1} of {2}",
+                currentPage * 50 + 1,
+                Math.min((currentPage + 1) * 50, messages.length),
+                messages.length));
     }
 }
