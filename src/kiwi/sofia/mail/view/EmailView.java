@@ -8,7 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.web.WebView;
-import kiwi.sofia.mail.template.EmailCell;
 
 public class EmailView implements SofView {
     private final Pane contentPane;
@@ -39,8 +38,12 @@ public class EmailView implements SofView {
     }
 
     private void setBody(Object body) {
+        webView.getEngine().loadContent(parseBody(body));
+    }
+
+    public static String parseBody(Object body) {
         if (body instanceof String) {
-            webView.getEngine().loadContent((String) body);
+            return (String) body;
         } else if (body instanceof Multipart) {
             try {
                 Multipart multipart = (Multipart) body;
@@ -48,12 +51,12 @@ public class EmailView implements SofView {
                 for (int i = 0; i < multipart.getCount(); i++) {
                     content.append(multipart.getBodyPart(i).getContent());
                 }
-                webView.getEngine().loadContent(content.toString());
+                return content.toString();
             } catch (Exception e) {
-                webView.getEngine().loadContent("<h1>Failed to load email body</h1>" + e.getMessage());
+                return "<h1>Failed to load email body</h1>" + e.getMessage();
             }
         } else {
-            webView.getEngine().loadContent("<h1>Failed to load email body</h1>Type " + body.getClass().getName() + " is not supported.");
+            return "<h1>Failed to load email body</h1>Type " + body.getClass().getName() + " is not supported.";
         }
     }
 
