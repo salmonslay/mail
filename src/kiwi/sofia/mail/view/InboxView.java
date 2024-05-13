@@ -1,6 +1,8 @@
 package kiwi.sofia.mail.view;
 
+import jakarta.mail.FetchProfile;
 import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import kiwi.sofia.mail.common.ImapManager;
 import kiwi.sofia.mail.task.FetchEmailsTask;
 import kiwi.sofia.mail.template.EmailCell;
 
@@ -151,7 +154,18 @@ public class InboxView implements SofView {
         messageObservableList.clear();
         int firstIndex = currentPage * 50;
         int lastIndex = Math.min((currentPage + 1) * 50, messages.length);
-        messageObservableList.addAll(Arrays.asList(messages).subList(firstIndex, lastIndex));
+        Message[] messages = Arrays.copyOfRange(this.messages, firstIndex, lastIndex);
+
+        FetchProfile fetchProfile = new FetchProfile();
+        fetchProfile.add(FetchProfile.Item.ENVELOPE);
+        fetchProfile.add(FetchProfile.Item.CONTENT_INFO);
+
+        try {
+            ImapManager.getCachedInbox().fetch(messages, fetchProfile);
+            messageObservableList.addAll(messages);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
 
         updatePageLabel();
     }
