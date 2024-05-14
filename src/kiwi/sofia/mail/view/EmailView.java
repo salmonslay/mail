@@ -1,13 +1,13 @@
 package kiwi.sofia.mail.view;
 
 import jakarta.mail.Message;
-import jakarta.mail.Multipart;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.web.WebView;
+import kiwi.sofia.mail.common.BodyParser;
 
 public class EmailView implements SofView {
     private final Pane contentPane;
@@ -38,26 +38,7 @@ public class EmailView implements SofView {
     }
 
     private void setBody(Object body) {
-        webView.getEngine().loadContent(parseBody(body));
-    }
-
-    public static String parseBody(Object body) {
-        if (body instanceof String) {
-            return (String) body;
-        } else if (body instanceof Multipart) {
-            try {
-                Multipart multipart = (Multipart) body;
-                StringBuilder content = new StringBuilder();
-                for (int i = 0; i < multipart.getCount(); i++) {
-                    content.append(multipart.getBodyPart(i).getContent());
-                }
-                return content.toString();
-            } catch (Exception e) {
-                return "<h1>Failed to load email body</h1>" + e.getMessage();
-            }
-        } else {
-            return "<h1>Failed to load email body</h1>Type " + body.getClass().getName() + " is not supported.";
-        }
+        webView.getEngine().loadContent(BodyParser.toHtml(body));
     }
 
     @Override
