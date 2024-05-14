@@ -10,7 +10,7 @@ import javafx.scene.web.WebView;
 import kiwi.sofia.mail.common.BodyParser;
 
 public class EmailView implements SofView {
-    private final Pane contentPane;
+    private final Pane rootPane;
     private final Message message;
 
 
@@ -20,7 +20,7 @@ public class EmailView implements SofView {
     private Label subjectLabel;
 
     public EmailView(Message message) {
-        contentPane = new GridPane();
+        rootPane = new GridPane();
         this.message = message;
 
         try {
@@ -31,18 +31,23 @@ public class EmailView implements SofView {
             subjectLabel.setText(message.getSubject());
             setBody(message.getContent());
 
-            contentPane.getChildren().add(loader.getRoot());
+            rootPane.getChildren().add(loader.getRoot());
         } catch (Exception e) {
             System.out.println("Failed to load InboxView.fxml" + e.getMessage());
         }
     }
 
     private void setBody(Object body) {
-        webView.getEngine().loadContent(BodyParser.toHtml(body));
+        webView.getEngine().loadContent(BodyParser.extractHtml(body));
     }
 
     @Override
     public Pane getView() {
-        return contentPane;
+        return rootPane;
+    }
+
+    @FXML
+    public void goBackToInbox(){
+        ClientView.showInbox();
     }
 }

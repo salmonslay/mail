@@ -45,4 +45,8 @@ public class ClientView implements SofView {
 
         return instance;
     }
+
+    public static void showInbox(){
+        getInstance().getBorderPane().setCenter(InboxView.getInstance().getView());
+    }
 }

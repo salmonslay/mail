@@ -1,7 +1,11 @@
 package kiwi.sofia.mail.common;
 
+import jakarta.mail.BodyPart;
+import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
 import org.jsoup.Jsoup;
+
+import java.io.IOException;
 
 public class BodyParser {
 
@@ -11,18 +15,41 @@ public class BodyParser {
      * @param body The body of the email.
      * @return The body of the email as HTML.
      */
-    public static String toHtml(Object body) {
+    public static String extractHtml(Object body) {
         if (body instanceof String) {
             return (String) body;
         } else if (body instanceof Multipart) {
+            StringBuilder plainText = new StringBuilder();
+            StringBuilder html = new StringBuilder();
             try {
                 Multipart multipart = (Multipart) body;
-                StringBuilder content = new StringBuilder();
+                System.out.printf("Reading %d parts\n", multipart.getCount());
+
                 for (int i = 0; i < multipart.getCount(); i++) {
-                    content.append(multipart.getBodyPart(i).getContent());
+                    BodyPart part = multipart.getBodyPart(i);
+                    String contentType = part.getContentType().toLowerCase();
+                    System.out.printf("Part %d: %s\n", i, contentType);
+
+                    if (contentType.contains("text/plain") && !contentType.contains("name=")) { // ignore name= in content type to prevent displaying attachments
+                        plainText.append(part.getContent());
+                    } else if (contentType.contains("text/html") && !contentType.contains("name=")) {
+                        html.append(part.getContent());
+                    } else if (contentType.contains("multipart/alternative") || contentType.contains("multipart/related")) {
+                        html.append(extractHtml(part.getContent())); // recursively extract HTML from nested multipart
+                    } else {
+                        System.out.println("Non-supported content type: " + contentType);
+                    }
                 }
-                return content.toString();
-            } catch (Exception e) {
+
+                if (!html.isEmpty()) {
+                    return html.toString();
+                } else if (!plainText.isEmpty()) {
+                    return plainText.toString();
+                } else {
+                    return "<h1>Failed to load email body</h1>";
+                }
+
+            } catch (MessagingException | IOException e) {
                 return "<h1>Failed to load email body</h1>" + e.getMessage();
             }
         } else {
@@ -31,7 +58,7 @@ public class BodyParser {
     }
 
     public static String toPlainText(Object body) {
-        String html = toHtml(body);
+        String html = extractHtml(body);
         return Jsoup.parse(html).wholeText();
 
     }
