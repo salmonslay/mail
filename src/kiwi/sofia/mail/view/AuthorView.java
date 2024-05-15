@@ -5,7 +5,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
-import kiwi.sofia.mail.template.EmailCell;
 
 import java.io.File;
 import java.util.ArrayList;

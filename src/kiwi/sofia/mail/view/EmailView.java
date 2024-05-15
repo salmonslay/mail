@@ -114,7 +114,7 @@ public class EmailView implements SofView {
         String lastPath = prefs.get("lastPath", System.getProperty("user.home"));
 
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setInitialDirectory(new java.io.File(lastPath));
+        directoryChooser.setInitialDirectory(new File(lastPath));
         directoryChooser.setTitle("Select directory to save attachments");
         File window = directoryChooser.showDialog(rootPane.getScene().getWindow());
 
