@@ -1,10 +1,10 @@
 package kiwi.sofia.mail.view;
 
-import jakarta.mail.Address;
-import jakarta.mail.Message;
-import jakarta.mail.Transport;
+import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
@@ -13,10 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.FileChooser;
-import kiwi.sofia.mail.common.ConnectionRecord;
-import kiwi.sofia.mail.common.ImapManager;
-import kiwi.sofia.mail.common.Pair;
-import kiwi.sofia.mail.common.SmtpManager;
+import kiwi.sofia.mail.common.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -104,7 +101,20 @@ public class AuthorView implements SofView {
             message.setFrom(new InternetAddress(set.username()));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(addressField.getText()));
             message.setSubject(subjectField.getText());
-            message.setText(messageField.getHtmlText(), "utf-8", "html");
+
+            BodyPart messageBody = new MimeBodyPart();
+            messageBody.setContent(messageField.getHtmlText(), "text/html");
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(messageBody);
+
+            for (File file : files) {
+                MimeBodyPart attachment = new MimeBodyPart();
+                attachment.attachFile(file);
+                multipart.addBodyPart(attachment);
+            }
+
+            message.setContent(multipart);
 
             Transport.send(message);
         } catch (Exception e) {
