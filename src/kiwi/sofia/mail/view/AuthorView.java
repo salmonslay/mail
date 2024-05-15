@@ -28,4 +28,14 @@ public class AuthorView implements SofView {
     public static void show() {
         ClientView.setCenter(new AuthorView().getView());
     }
+
+    @FXML
+    public void actionSendEmail() {
+        System.out.println("Sending email");
+    }
+
+    @FXML
+    public void actionBackToInbox() {
+        ClientView.showInbox();
+    }
 }
