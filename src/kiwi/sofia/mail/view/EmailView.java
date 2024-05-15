@@ -1,5 +1,6 @@
 package kiwi.sofia.mail.view;
 
+import jakarta.mail.Address;
 import jakarta.mail.Message;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Circle;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import kiwi.sofia.mail.common.BodyParser;
@@ -19,7 +21,6 @@ public class EmailView implements SofView {
     private final Pane rootPane;
     private final Message message;
     private Object content;
-
     @FXML
     private Button replyAllButton;
     @FXML
@@ -28,6 +29,18 @@ public class EmailView implements SofView {
     private WebView webView;
     @FXML
     private Label subjectLabel;
+    @FXML
+    private Label emailLabel;
+    @FXML
+    private Label senderLabel;
+    @FXML
+    private Label dateLabel;
+    @FXML
+    private Label firstLetterLabel;
+    @FXML
+    private Label toLabel;
+    @FXML
+    private Circle circle;
 
     public EmailView(Message message) {
         rootPane = new GridPane();
@@ -43,6 +56,21 @@ public class EmailView implements SofView {
             setBody(content);
 
             attachmentsButton.setDisable(BodyParser.attachmentCount(message) == 0);
+
+            String regex = "(.+) (<.+>)";
+            String from = message.getFrom()[0].toString();
+            senderLabel.setText(from.replaceAll(regex, "$1"));
+            emailLabel.setText(from.replaceAll(regex, "$2"));
+            dateLabel.setText(message.getSentDate().toString());
+
+
+            setCircle(from);
+
+            Address[] recipients = message.getAllRecipients();
+            if (recipients != null && recipients.length > 0)
+                toLabel.setText("to " + message.getAllRecipients()[0].toString());
+            else
+                toLabel.setText("to me");
 
             rootPane.getChildren().add(loader.getRoot());
         } catch (Exception e) {
@@ -96,5 +124,25 @@ public class EmailView implements SofView {
         prefs.put("lastPath", path);
 
         new Thread(new DownloadAttachmentsTask(content, path)).start();
+    }
+
+    /**
+     * Sets the circle with the first letter of the sender, together with a color based on the letter.
+     *
+     * @param from The sender of the email
+     */
+    private void setCircle(String from) {
+        char firstChar = ' ';
+        for (char c : from.toCharArray()) {
+            if (c != ' ' && c != '"') {
+                firstChar = c;
+                break;
+            }
+        }
+        firstLetterLabel.setText((firstChar + "").toUpperCase());
+
+        String[] colors = new String[]{"#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#03a9f4", "#00bcd4", "#009688", "#4caf50", "#8bc34a", "#cddc39", "#ffeb3b", "#ffc107", "#ff9800", "#ff5722", "#795548", "#9e9e9e", "#607d8b"};
+        int index = (int) firstChar % colors.length;
+        circle.setStyle("-fx-fill: " + colors[index]);
     }
 }

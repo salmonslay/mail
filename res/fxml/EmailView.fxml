@@ -5,6 +5,9 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -14,12 +17,6 @@
    <center>
       <WebView fx:id="webView" prefHeight="695.0" prefWidth="1280.0" />
    </center>
-   <top>
-      <Label fx:id="subjectLabel" text="Label" BorderPane.alignment="CENTER">
-         <font>
-            <Font size="36.0" />
-         </font></Label>
-   </top>
    <bottom>
       <BorderPane BorderPane.alignment="CENTER">
          <right>
@@ -96,4 +93,77 @@
          </left>
       </BorderPane>
    </bottom>
+   <top>
+      <VBox prefHeight="96.0" BorderPane.alignment="CENTER">
+         <children>
+            <BorderPane prefHeight="48.0" prefWidth="200.0">
+               <left>
+                  <Label fx:id="subjectLabel" text="Subject" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets left="86.0" top="4.0" />
+                     </BorderPane.margin>
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+               </left>
+            </BorderPane>
+            <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="48.0" prefWidth="1280.0">
+               <left>
+                  <FlowPane prefHeight="200.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <StackPane>
+                           <FlowPane.margin>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </FlowPane.margin>
+                           <children>
+                              <Circle fx:id="circle" fill="#4684e8" radius="20.0" stroke="BLACK" strokeType="INSIDE" />
+                              <Label fx:id="firstLetterLabel" text="R" textFill="WHITE">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </StackPane>
+                        <BorderPane prefHeight="48.0" prefWidth="500.0">
+                           <top>
+                              <FlowPane prefHeight="24.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <Label fx:id="senderLabel" alignment="TOP_RIGHT" text="very long label yo">
+                                       <FlowPane.margin>
+                                          <Insets top="4.0" />
+                                       </FlowPane.margin>
+                                    </Label>
+                                    <Label fx:id="emailLabel" alignment="TOP_RIGHT" opacity="0.7" text="Label">
+                                       <FlowPane.margin>
+                                          <Insets left="8.0" top="4.0" />
+                                       </FlowPane.margin>
+                                    </Label>
+                                 </children>
+                              </FlowPane>
+                           </top>
+                           <bottom>
+                              <Label fx:id="toLabel" opacity="0.7" prefHeight="24.0" prefWidth="200.0" text="Label" BorderPane.alignment="CENTER_LEFT" />
+                           </bottom>
+                           <FlowPane.margin>
+                              <Insets left="20.0" />
+                           </FlowPane.margin>
+                        </BorderPane>
+                     </children>
+                  </FlowPane>
+               </left>
+               <right>
+                  <Label fx:id="dateLabel" opacity="0.7" text="This email was sent at x" textAlignment="RIGHT" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets right="24.0" />
+                     </BorderPane.margin>
+                  </Label>
+               </right>
+               <padding>
+                  <Insets left="20.0" right="20.0" />
+               </padding>
+            </BorderPane>
+         </children>
+      </VBox>
+   </top>
 </BorderPane>
