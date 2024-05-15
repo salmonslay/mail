@@ -49,4 +49,25 @@ public class ClientView implements SofView {
     public static void showInbox(){
         getInstance().getBorderPane().setCenter(InboxView.getInstance().getView());
     }
+
+    @FXML
+    public void actionWriteEmail(){
+        AuthorView.show();
+    }
+
+    @FXML
+    public void actionLogOut(){
+        LoginView.clearCredentials();
+        rootPane.getScene().setRoot(new LoginView().getView());
+    }
+
+    @FXML
+    public void actionQuit(){
+        System.exit(0);
+    }
+
+    @FXML
+    public void actionOpenInbox(){
+        showInbox();
+    }
 }
