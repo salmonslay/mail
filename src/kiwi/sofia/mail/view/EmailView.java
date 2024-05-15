@@ -95,6 +95,7 @@ public class EmailView implements SofView {
     @FXML
     public void actionReply() {
         System.out.println("Replying to email");
+        AuthorView.show();
     }
 
     @FXML
