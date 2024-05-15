@@ -4,7 +4,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.stage.FileChooser;
 import kiwi.sofia.mail.template.EmailCell;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.prefs.Preferences;
 
 public class AuthorView implements SofView {
     @FXML
@@ -12,6 +18,8 @@ public class AuthorView implements SofView {
 
     @FXML
     private Label filesAttachedLabel;
+
+    private List<File> files = new ArrayList<>();
 
     private AuthorView() {
         try {
@@ -42,7 +50,20 @@ public class AuthorView implements SofView {
 
     @FXML
     public void actionAttachFiles() {
-        System.out.println("Attaching file");
+        Preferences prefs = Preferences.userNodeForPackage(AuthorView.class);
+        String lastPath = prefs.get("lastPath", System.getProperty("user.home"));
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File(lastPath));
+        fileChooser.setTitle("Attach files");
+        files = fileChooser.showOpenMultipleDialog(rootPane.getScene().getWindow());
+
+        if (files == null)
+            return;
+
+        filesAttachedLabel.setText(files.size() + (files.size() == 1 ? " file" : " files") + " attached");
+
+        prefs.put("lastPath", files.get(0).getParent());
     }
 
     @FXML
