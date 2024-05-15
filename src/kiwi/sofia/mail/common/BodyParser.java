@@ -44,10 +44,13 @@ public class BodyParser {
                 }
 
                 if (!html.isEmpty()) {
+                    System.out.println("HTML body found");
                     return html.toString();
                 } else if (!plainText.isEmpty()) {
+                    System.out.println("Plain text body found");
                     return plainText.toString();
                 } else {
+                    System.out.println("No body found");
                     return "<h1>Failed to load email body</h1>";
                 }
 
