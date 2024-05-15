@@ -3,7 +3,6 @@ package kiwi.sofia.mail.view;
 import jakarta.mail.Message;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -11,7 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import kiwi.sofia.mail.common.BodyParser;
-import kiwi.sofia.mail.template.EmailCell;
+import kiwi.sofia.mail.task.DownloadAttachmentsTask;
 
 import java.io.File;
 import java.util.prefs.Preferences;
@@ -42,6 +41,8 @@ public class EmailView implements SofView {
             subjectLabel.setText(message.getSubject());
             content = message.getContent();
             setBody(content);
+
+            attachmentsButton.setDisable(BodyParser.attachmentCount(message) == 0);
 
             rootPane.getChildren().add(loader.getRoot());
         } catch (Exception e) {
@@ -94,6 +95,6 @@ public class EmailView implements SofView {
         String path = window.getAbsolutePath();
         prefs.put("lastPath", path);
 
-        BodyParser.saveAttachments(content, path);
+        new Thread(new DownloadAttachmentsTask(content, path)).start();
     }
 }
