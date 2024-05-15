@@ -2,18 +2,13 @@ package kiwi.sofia.mail.task;
 
 import jakarta.mail.*;
 import javafx.concurrent.Task;
-import kiwi.sofia.mail.common.ConnectionRecord;
-import kiwi.sofia.mail.common.ImapManager;
-import kiwi.sofia.mail.common.Pair;
-import kiwi.sofia.mail.common.PropertiesCreator;
-
-import java.util.Properties;
+import kiwi.sofia.mail.common.*;
 
 public class ConnectionVerifierTask extends Task<Void> {
 
     @Override
     protected Void call() {
-        if (verifySmtp() == null) {
+        if (!verifySmtp()) {
             throw new RuntimeException("SMTP connection failed");
         }
 
@@ -30,36 +25,20 @@ public class ConnectionVerifierTask extends Task<Void> {
     /**
      * Checks if the SMTP credentials are correct by trying to connect to the SMTP server.
      *
-     * @return the session if the SMTP connection was successful, null otherwise
-     * @see <a href="https://stackoverflow.com/a/3060866/11420970/">Source</a>
+     * @return true if the SMTP connection was successful, false otherwise
      */
-    private Session verifySmtp() {
+    private boolean verifySmtp() {
         ConnectionRecord set = ConnectionRecord.getSmtpConnectionSet();
 
         updateMessage("Verifying SMTP connection...");
 
-        try {
-            Properties props = PropertiesCreator.createSmtpProperties();
-
-            Session session = Session.getInstance(props, !set.password().isBlank() ?
-                    new Authenticator() {
-                        protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication(set.username(), set.password());
-                        }
-                    } : null); // null authenticator if no password is provided
-
-            Transport transport = session.getTransport("smtp");
-            transport.connect(set.username(), set.password());
-            transport.close();
-
-            System.out.printf("SMTP connection to %s successful\n", set.host());
-            return session;
-        } catch (AuthenticationFailedException e) {
-            updateMessage("SMTP authentication failed - " + e.getMessage());
-        } catch (Exception e) {
-            updateMessage("Error connecting to SMTP server: " + e.getMessage());
+        Pair<Transport, Exception> result = SmtpManager.getTransportExc();
+        if (result.getB() != null) {
+            updateMessage("Error connecting to SMTP server: " + result.getB().getMessage());
+            return false;
         }
-        return null;
+
+        return true;
     }
 
     /**
