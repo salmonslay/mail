@@ -36,11 +36,6 @@ public class AuthorView implements SofView {
     }
 
     @FXML
-    public void actionSendEmail() {
-        System.out.println("Sending email");
-    }
-
-    @FXML
     public void actionBackToInbox() {
         ClientView.showInbox();
     }
