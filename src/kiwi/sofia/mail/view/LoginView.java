@@ -29,6 +29,7 @@ public class LoginView implements SofView {
     private final CheckBox rememberMe;
     private final Button loginButton;
     private final Label statusLabel;
+    private final TextField displayNameField;
 
     public LoginView() {
         ConnectionRecord smtpSet = ConnectionRecord.getSmtpConnectionSet();
@@ -49,6 +50,10 @@ public class LoginView implements SofView {
         Text smtpTitle = new Text("SMTP Server");
         smtpTitle.setFont(Font.font("Arial", FontWeight.NORMAL, 20));
         contentPane.add(smtpTitle, 0, line++, 2, 1);
+
+        contentPane.add(new Label("Display name:"), 0, line);
+        displayNameField = new TextField(smtpSet.displayName());
+        contentPane.add(displayNameField, 1, line++);
 
         contentPane.add(new Label("Username:"), 0, line); // is it bad practice to init without a reference? eh, saves quite a few lines in this otherwise very ugly function
         smtpUsernameField = new TextField(smtpSet.username());
@@ -142,6 +147,7 @@ public class LoginView implements SofView {
      */
     private void saveCredentials() {
         Preferences prefs = Preferences.userNodeForPackage(LoginView.class);
+        prefs.put("smtpDisplayName", displayNameField.getText());
         prefs.put("smtpUsername", smtpUsernameField.getText());
         prefs.put("smtpHost", smtpHostField.getText());
         prefs.putInt("smtpPort", smtpPortField.getValue());
@@ -168,6 +174,7 @@ public class LoginView implements SofView {
         if (prefs.getBoolean("rememberMe", false))
             return;
 
+        prefs.remove("smtpDisplayName");
         prefs.remove("smtpUsername");
         prefs.remove("smtpHost");
         prefs.remove("smtpPort");

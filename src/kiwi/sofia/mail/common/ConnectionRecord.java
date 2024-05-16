@@ -7,7 +7,7 @@ import java.util.prefs.Preferences;
 /**
  * A record of a host, username, password, and port for a connection.
  */
-public record ConnectionRecord(String host, String username, String password, int port) {
+public record ConnectionRecord(String host, String username, String password, int port, String displayName) {
 
     /**
      * @return a ConnectionSet for SMTP with the default fallback host and port
@@ -35,7 +35,8 @@ public record ConnectionRecord(String host, String username, String password, in
         String password = prefs.get(key + "Password", "");
         String host = prefs.get(key + "Host", fallbackHost);
         int port = prefs.getInt(key + "Port", fallbackPort);
+        String displayName = prefs.get(key + "DisplayName", username);
 
-        return new ConnectionRecord(host, username, password, port);
+        return new ConnectionRecord(host, username, password, port, displayName);
     }
 }

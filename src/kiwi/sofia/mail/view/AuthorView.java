@@ -98,7 +98,7 @@ public class AuthorView implements SofView {
             ConnectionRecord set = ConnectionRecord.getSmtpConnectionSet();
 
             MimeMessage message = new MimeMessage(SmtpManager.getCachedSession());
-            message.setFrom(new InternetAddress(set.username()));
+            message.setFrom(new InternetAddress(set.username(), set.displayName()));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(addressField.getText()));
             message.setSubject(subjectField.getText());
 
