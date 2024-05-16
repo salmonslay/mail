@@ -5,9 +5,11 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
@@ -31,6 +33,10 @@ public class AuthorView implements SofView {
     private TextField addressField;
     @FXML
     private HTMLEditor messageField;
+    @FXML
+    private Button sendButton;
+    @FXML
+    private Button attachButton;
     private List<File> files = new ArrayList<>();
 
     private AuthorView() {
@@ -93,33 +99,50 @@ public class AuthorView implements SofView {
         }
 
         System.out.println("Sending email");
+        addressField.setDisable(true);
+        subjectField.setDisable(true);
+        messageField.setDisable(true);
+        sendButton.setDisable(true);
+        attachButton.setDisable(true);
 
-        try {
-            ConnectionRecord set = ConnectionRecord.getSmtpConnectionSet();
+        Task<Boolean> sendTask = new Task<>() {
+            @Override
+            protected Boolean call() {
+                try {
+                    updateMessage("Sending message...");
+                    ConnectionRecord set = ConnectionRecord.getSmtpConnectionSet();
 
-            MimeMessage message = new MimeMessage(SmtpManager.getCachedSession());
-            message.setFrom(new InternetAddress(set.username(), set.displayName()));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(addressField.getText()));
-            message.setSubject(subjectField.getText());
+                    MimeMessage message = new MimeMessage(SmtpManager.getCachedSession());
+                    message.setFrom(new InternetAddress(set.username(), set.displayName()));
+                    message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(addressField.getText()));
+                    message.setSubject(subjectField.getText());
 
-            BodyPart messageBody = new MimeBodyPart();
-            messageBody.setContent(messageField.getHtmlText(), "text/html");
+                    BodyPart messageBody = new MimeBodyPart();
+                    messageBody.setContent(messageField.getHtmlText(), "text/html");
 
-            Multipart multipart = new MimeMultipart();
-            multipart.addBodyPart(messageBody);
+                    Multipart multipart = new MimeMultipart();
+                    multipart.addBodyPart(messageBody);
 
-            for (File file : files) {
-                MimeBodyPart attachment = new MimeBodyPart();
-                attachment.attachFile(file);
-                multipart.addBodyPart(attachment);
+                    for (File file : files) {
+                        MimeBodyPart attachment = new MimeBodyPart();
+                        attachment.attachFile(file);
+                        multipart.addBodyPart(attachment);
+                    }
+
+                    message.setContent(multipart);
+
+                    Transport.send(message);
+                    return true;
+                } catch (Exception e) {
+                    updateMessage("Failed to send email: " + e.getMessage());
+                    return false;
+                }
             }
+        };
 
-            message.setContent(multipart);
+        filesAttachedLabel.textProperty().bind(sendTask.messageProperty());
 
-            Transport.send(message);
-        } catch (Exception e) {
-            System.out.println("Failed to send email: " + e.getMessage());
-        }
+        new Thread(sendTask).start();
     }
 
     /**
