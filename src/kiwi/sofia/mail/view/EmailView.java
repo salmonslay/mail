@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -63,14 +64,11 @@ public class EmailView implements SofView {
             emailLabel.setText(from.replaceAll(regex, "$2"));
             dateLabel.setText(message.getSentDate().toString());
 
-
             setCircle(from);
 
-            Address[] recipients = message.getAllRecipients();
-            if (recipients != null && recipients.length > 0)
-                toLabel.setText("to " + message.getAllRecipients()[0].toString());
-            else
-                toLabel.setText("to me");
+            String toText = getToText();
+            toLabel.setText(toText);
+            toLabel.setTooltip(new Tooltip(toText));
 
             rootPane.getChildren().add(loader.getRoot());
         } catch (Exception e) {
@@ -118,8 +116,7 @@ public class EmailView implements SofView {
         directoryChooser.setTitle("Select directory to save attachments");
         File window = directoryChooser.showDialog(rootPane.getScene().getWindow());
 
-        if (window == null)
-            return;
+        if (window == null) return;
 
         String path = window.getAbsolutePath();
         prefs.put("lastPath", path);
@@ -147,7 +144,24 @@ public class EmailView implements SofView {
         circle.setStyle("-fx-fill: " + colors[index]);
     }
 
-    public static void show(Message message){
+    public static void show(Message message) {
         ClientView.setCenter(new EmailView(message).getView());
+    }
+
+    private String getToText() {
+        try {
+            Address[] recipients = message.getAllRecipients();
+            if (recipients != null && recipients.length > 0) {
+                String to = "to: ";
+                for (int i = 0; i < recipients.length; i++) {
+                    Address recipient = recipients[i];
+                    to += recipient;
+                    if (i < recipients.length - 1) to += ", ";
+                }
+                return to;
+            }
+        } catch (Exception ignored) {
+        }
+        return "to me";
     }
 }
