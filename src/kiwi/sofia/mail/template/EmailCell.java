@@ -58,7 +58,7 @@ public class EmailCell extends ListCell<Message> {
         try {
             System.out.printf("Opening email with subject: %s\n", message.getSubject());
 
-            ClientView.setCenter(new EmailView(message).getView());
+            EmailView.show(message);
         } catch (MessagingException e) {
             System.out.println(e.getMessage());
         }

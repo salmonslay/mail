@@ -99,15 +99,11 @@ public class AuthorView implements SofView {
         }
 
         System.out.println("Sending email");
-        addressField.setDisable(true);
-        subjectField.setDisable(true);
-        messageField.setDisable(true);
-        sendButton.setDisable(true);
-        attachButton.setDisable(true);
+        setButtons(true);
 
-        Task<Boolean> sendTask = new Task<>() {
+        Task<MimeMessage> sendTask = new Task<>() {
             @Override
-            protected Boolean call() {
+            protected MimeMessage call() {
                 try {
                     updateMessage("Sending message...");
                     ConnectionRecord set = ConnectionRecord.getSmtpConnectionSet();
@@ -132,15 +128,30 @@ public class AuthorView implements SofView {
                     message.setContent(multipart);
 
                     Transport.send(message);
-                    return true;
+                    updateMessage("Email sent successfully");
+                    return message;
                 } catch (Exception e) {
                     updateMessage("Failed to send email: " + e.getMessage());
-                    return false;
+                    return null;
                 }
             }
         };
 
         filesAttachedLabel.textProperty().bind(sendTask.messageProperty());
+
+        sendTask.setOnSucceeded(event -> {
+            EmailView.show(sendTask.getValue());
+        });
+
+        sendTask.setOnFailed(event -> {
+            setButtons(false);
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Failed to send email");
+            alert.setHeaderText("Failed to send email");
+            alert.setContentText(sendTask.getException().getMessage());
+            alert.showAndWait();
+        });
 
         new Thread(sendTask).start();
     }
@@ -168,5 +179,13 @@ public class AuthorView implements SofView {
         }
 
         return new Pair<>(recipients.toArray(new InternetAddress[0]), null);
+    }
+
+    private void setButtons(boolean disable) {
+        sendButton.setDisable(disable);
+        attachButton.setDisable(disable);
+        addressField.setDisable(disable);
+        subjectField.setDisable(disable);
+        messageField.setDisable(disable);
     }
 }

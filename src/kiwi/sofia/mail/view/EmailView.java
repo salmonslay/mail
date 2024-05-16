@@ -74,7 +74,7 @@ public class EmailView implements SofView {
 
             rootPane.getChildren().add(loader.getRoot());
         } catch (Exception e) {
-            System.out.println("Failed to load InboxView.fxml" + e.getMessage());
+            System.out.println("Failed to load EmailView.fxml: " + e.getMessage());
         }
     }
 
@@ -145,5 +145,9 @@ public class EmailView implements SofView {
         String[] colors = new String[]{"#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#03a9f4", "#00bcd4", "#009688", "#4caf50", "#8bc34a", "#cddc39", "#ffeb3b", "#ffc107", "#ff9800", "#ff5722", "#795548", "#9e9e9e", "#607d8b"};
         int index = (int) firstChar % colors.length;
         circle.setStyle("-fx-fill: " + colors[index]);
+    }
+
+    public static void show(Message message){
+        ClientView.setCenter(new EmailView(message).getView());
     }
 }
