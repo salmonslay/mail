@@ -145,6 +145,7 @@ public class InboxView implements SofView {
         buttonLeft.setDisable(false);
 
         refreshPage();
+        listView.scrollTo(0);
     }
 
     /**
