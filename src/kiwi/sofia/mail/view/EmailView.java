@@ -206,6 +206,5 @@ public class EmailView implements SofView {
         html = html.replaceAll(regex, replacement) + " ";
 
         webView.getEngine().loadContent(html);
-        System.out.println(html);
     }
 }
