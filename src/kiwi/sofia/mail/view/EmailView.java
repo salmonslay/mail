@@ -12,6 +12,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
+import kiwi.sofia.mail.common.AuthorMode;
 import kiwi.sofia.mail.common.BodyParser;
 import kiwi.sofia.mail.task.DownloadAttachmentsTask;
 
@@ -102,17 +103,17 @@ public class EmailView implements SofView {
 
     @FXML
     public void actionReply() {
-        AuthorView.show(message, false);
+        AuthorView.show(message, AuthorMode.REPLY);
     }
 
     @FXML
     public void actionForward() {
-        System.out.println("Forwarding email");
+        AuthorView.show(message, AuthorMode.FORWARD);
     }
 
     @FXML
     public void actionReplyAll() {
-        AuthorView.show(message, true);
+        AuthorView.show(message, AuthorMode.REPLY_ALL);
     }
 
     @FXML

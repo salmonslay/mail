@@ -45,8 +45,11 @@ public class AuthorView implements SofView {
     private Button attachButton;
     private List<File> files = new ArrayList<>();
     private Message message;
+    private AuthorMode authorMode;
 
     private AuthorView() {
+        authorMode = AuthorMode.NEW;
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AuthorView.fxml"));
             loader.setController(this);
@@ -59,11 +62,14 @@ public class AuthorView implements SofView {
         }
     }
 
-    private AuthorView(Message message, boolean replyAll) {
+    private AuthorView(Message message, AuthorMode mode) {
         this();
 
         this.message = message;
-        setReply(replyAll);
+        this.authorMode = mode;
+
+        if (mode != AuthorMode.NEW)
+            setReply(mode);
     }
 
     @Override
@@ -75,8 +81,8 @@ public class AuthorView implements SofView {
         ClientView.setCenter(new AuthorView().getView());
     }
 
-    public static void show(Message message, boolean replyAll) {
-        ClientView.setCenter(new AuthorView(message, replyAll).getView());
+    public static void show(Message message, AuthorMode mode) {
+        ClientView.setCenter(new AuthorView(message, mode).getView());
     }
 
     @FXML
@@ -220,10 +226,19 @@ public class AuthorView implements SofView {
         messageField.setDisable(disable);
     }
 
-    private void setReply(boolean replyAll) {
+    private void setReply(AuthorMode mode) {
+        if (mode == AuthorMode.NEW)
+            return;
+
         try {
-            subjectField.setText("Re: " + message.getSubject());
-            addressField.setText(getReplyAddress(replyAll));
+            String subject = message.getSubject();
+            if (mode == AuthorMode.FORWARD)
+                subjectField.setText("Fwd: " + subject);
+            else
+                subjectField.setText("Re: " + subject);
+
+            if (mode != AuthorMode.FORWARD)
+                setReplyAddress(mode == AuthorMode.REPLY_ALL);
 
             String html = BodyParser.extractHtml(message.getContent());
             String reply = "<br><br>On " + message.getSentDate() + ", " + message.getFrom()[0] + " wrote:<br>";
@@ -234,12 +249,11 @@ public class AuthorView implements SofView {
     }
 
     /**
-     * Gets the reply address for the email in a comma-separated list.
+     * Sets the reply address for the email as a comma-separated list.
      *
      * @param replyAll True to include all recipients in the reply
-     * @return The reply addresses in a comma-separated list
      */
-    private String getReplyAddress(boolean replyAll) {
+    private void setReplyAddress(boolean replyAll) {
         try {
             ArrayList<Address> addresses = new ArrayList<>();
             addresses.add(message.getFrom()[0]);
@@ -255,10 +269,9 @@ public class AuthorView implements SofView {
 
             addressList.delete(addressList.length() - 2, addressList.length()); // remove the last comma and space
 
-            return addressList.toString();
+            addressField.setText(addressList.toString());
         } catch (Exception e) {
             System.out.println("Failed to get reply address: " + e.getMessage());
-            return "";
         }
     }
 }
