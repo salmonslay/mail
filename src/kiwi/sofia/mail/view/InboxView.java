@@ -3,6 +3,7 @@ package kiwi.sofia.mail.view;
 import jakarta.mail.FetchProfile;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -45,6 +46,9 @@ public class InboxView implements SofView {
     private ObservableList<Message> messageObservableList = FXCollections.observableArrayList();
     private Message[] messages;
     private int currentPage = 0;
+    @FXML
+    private Button buttonReload;
+    private boolean refreshing = false;
 
     private InboxView() {
         try {
@@ -54,6 +58,8 @@ public class InboxView implements SofView {
 
             listView.setItems(messageObservableList);
             listView.setCellFactory(param -> new EmailCell());
+
+            startRefreshThread();
         } catch (Exception e) {
             System.out.println("Failed to load InboxView.fxml" + e.getMessage());
         }
@@ -62,9 +68,11 @@ public class InboxView implements SofView {
     /**
      * Fetches emails from the user's inbox and updates the view with the emails.
      */
-    protected void fetchEmails() {
+    @FXML
+    public void fetchEmails() {
         buttonLeft.setDisable(true);
         pageLabel.setText("...");
+        buttonReload.setDisable(true);
 
         FetchEmailsTask fetchEmailsTask = new FetchEmailsTask();
 
@@ -83,12 +91,16 @@ public class InboxView implements SofView {
 
             currentPage = 0;
             refreshPage();
+
+            buttonReload.setDisable(false);
         });
 
         fetchEmailsTask.setOnFailed(event -> {
             statusLabel.textProperty().unbind();
             statusLabel.setText("Could not fetch emails.\n" + fetchEmailsTask.getException().getMessage());
             System.out.println("Failed to fetch emails: " + fetchEmailsTask.getException().getMessage());
+
+            buttonReload.setDisable(false);
         });
 
         ExecutorService executorService = Executors.newFixedThreadPool(1);
@@ -183,5 +195,24 @@ public class InboxView implements SofView {
                 currentPage * 50 + 1,
                 Math.min((currentPage + 1) * 50, messages.length),
                 messages.length));
+    }
+
+    private void startRefreshThread() {
+        if (refreshing)
+            return;
+
+        refreshing = true;
+
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(15000);
+                    Platform.runLater(this::fetchEmails);
+                    System.out.println("Refreshed inbox");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }
