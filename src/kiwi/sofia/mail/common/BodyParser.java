@@ -116,7 +116,7 @@ public class BodyParser {
 
                             attachments.put(cid, fileName);
                             System.out.printf("Saving attachment %s, CID %s\n", fileName, cid);
-                            saveFile(part, part.getFileName(), path, messageHashCode);
+                            saveFile(part, part.getFileName(), path, messageHashCode, cid);
 
                             break;
                         }
@@ -137,12 +137,12 @@ public class BodyParser {
      * @param fileName The fileName of the attachment.
      * @param dirPath  The path to save the attachment to.
      */
-    private static void saveFile(BodyPart part, String fileName, String dirPath, Integer messageHashCode) {
+    private static void saveFile(BodyPart part, String fileName, String dirPath, Integer messageHashCode, String cid) {
         try {
             Path path = Path.of(dirPath, fileName);
             ((MimeBodyPart) part).saveFile(path.toFile());
 
-            Path tempPath = getTempPath(fileName, messageHashCode);
+            Path tempPath = getTempPath(cid, messageHashCode);
             Files.createDirectories(tempPath.getParent());
             Files.copy(path, tempPath);
         } catch (IOException | MessagingException e) {
@@ -150,8 +150,21 @@ public class BodyParser {
         }
     }
 
-    public static Path getTempPath(String fileName, Integer messageHashCode) {
-        return Path.of(System.getProperty("java.io.tmpdir"), "sofmail", messageHashCode.toString(), fileName);
+    /**
+     * @param messageHashCode the hash code of a message
+     * @return the temp directory of a message
+     */
+    public static Path getTempDir(Integer messageHashCode) {
+        return Path.of(System.getProperty("java.io.tmpdir"), "sofmail", messageHashCode.toString());
+    }
+
+    /**
+     * @param cid             the content id of the file
+     * @param messageHashCode the hash code of the owning message
+     * @return the temp path of a file
+     */
+    public static Path getTempPath(String cid, Integer messageHashCode) {
+        return Path.of(getTempDir(messageHashCode).toString(), cid);
     }
 
     public static String extractPlainText(Object body) {
@@ -187,7 +200,7 @@ public class BodyParser {
      * @param msg The message to get the hash code of.
      * @return The hash code of the message content and sent date.
      */
-    public static int getHashCode(Message msg) {
+    public static Integer getHashCode(Message msg) {
         try {
             String str = extractHtml(msg.getContent()) + msg.getSentDate().toString();
             return str.hashCode();

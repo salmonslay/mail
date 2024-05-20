@@ -48,7 +48,6 @@ public class EmailView implements SofView {
     private Label toLabel;
     @FXML
     private Circle circle;
-    private String attachmentsPath;
     private String html;
 
     public EmailView(Message message) {
@@ -77,6 +76,8 @@ public class EmailView implements SofView {
             String toText = getToText();
             toLabel.setText(toText);
             toLabel.setTooltip(new Tooltip(toText));
+
+            displayAttachments();
 
             rootPane.getChildren().add(loader.getRoot());
         } catch (Exception e) {
@@ -142,8 +143,7 @@ public class EmailView implements SofView {
                 System.out.println("Failed to open directory: " + e.getMessage());
             }
 
-            attachmentsPath = path;
-            displayAttachments(attachments);
+            displayAttachments();
         });
 
         new Thread(task).start();
@@ -197,17 +197,15 @@ public class EmailView implements SofView {
 
     /**
      * Replaces attachment CIDs with a local path to the attachment.
-     *
-     * @param attachments A map of attachment CIDs and their corresponding file names.
+     * For this to work the attachments need to be saved to a temporary directory beforehand.
      */
-    private void displayAttachments(Map<String, String> attachments) {
+    private void displayAttachments() {
         String regex = "src=\"cid:(.+?)\"";
-        attachmentsPath = attachmentsPath.replaceAll("\\\\", "/"); // Replace backslashes with forward slashes
-        String replacement = "src=\"file://" + attachmentsPath + "/$1\""; // Set the src attribute to the CID
-        html = html.replaceAll(regex, replacement);
-
-        attachments.forEach((cid, name) -> html = html.replaceAll(cid, name)); // Replace the CID with the file name
+        String tempPath = BodyParser.getTempDir(BodyParser.getHashCode(message)).toString().replaceAll("\\\\", "/"); // Replace backslashes with forward slashes
+        String replacement = "src=\"file://" + tempPath + "/$1\""; // Set the src attribute to the CID
+        html = html.replaceAll(regex, replacement) + " ";
 
         webView.getEngine().loadContent(html);
+        System.out.println(html);
     }
 }
