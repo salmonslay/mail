@@ -42,6 +42,5 @@ public class Main extends Application {
         stage.heightProperty().addListener((obs, oldVal, newVal) -> {
             root.setPrefHeight((double) newVal);
         });
-
     }
 }
