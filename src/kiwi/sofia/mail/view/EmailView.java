@@ -65,6 +65,7 @@ public class EmailView implements SofView {
             setBody(content);
 
             attachmentsButton.setDisable(BodyParser.attachmentCount(message) == 0);
+            replyAllButton.setDisable(message.getAllRecipients() != null && message.getAllRecipients().length < 2);
 
             String regex = "(.+) (<.+>)";
             String from = message.getFrom()[0].toString();
