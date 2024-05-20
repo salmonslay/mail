@@ -16,6 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.FileChooser;
 import kiwi.sofia.mail.common.*;
+import org.jsoup.Jsoup;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -113,11 +114,15 @@ public class AuthorView implements SofView {
                     message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(addressField.getText()));
                     message.setSubject(subjectField.getText());
 
-                    BodyPart messageBody = new MimeBodyPart();
-                    messageBody.setContent(messageField.getHtmlText(), "text/html");
+                    BodyPart htmlBody = new MimeBodyPart();
+                    htmlBody.setContent(messageField.getHtmlText(), "text/html");
 
-                    Multipart multipart = new MimeMultipart();
-                    multipart.addBodyPart(messageBody);
+                    BodyPart plainBody = new MimeBodyPart();
+                    plainBody.setContent(Jsoup.parse(messageField.getHtmlText()).wholeText(), "text/plain");
+
+                    Multipart multipart = new MimeMultipart("alternative");
+                    multipart.addBodyPart(plainBody);
+                    multipart.addBodyPart(htmlBody); // most important part last
 
                     for (File file : files) {
                         MimeBodyPart attachment = new MimeBodyPart();
