@@ -102,8 +102,7 @@ public class EmailView implements SofView {
 
     @FXML
     public void actionReply() {
-        System.out.println("Replying to email");
-        AuthorView.show();
+        AuthorView.show(message, false);
     }
 
     @FXML
@@ -113,7 +112,7 @@ public class EmailView implements SofView {
 
     @FXML
     public void actionReplyAll() {
-        System.out.println("Replying to all");
+        AuthorView.show(message, true);
     }
 
     @FXML

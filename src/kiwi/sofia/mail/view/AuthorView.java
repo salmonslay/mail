@@ -20,6 +20,7 @@ import org.jsoup.Jsoup;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.prefs.Preferences;
 
@@ -43,6 +44,7 @@ public class AuthorView implements SofView {
     @FXML
     private Button attachButton;
     private List<File> files = new ArrayList<>();
+    private Message message;
 
     private AuthorView() {
         try {
@@ -57,6 +59,13 @@ public class AuthorView implements SofView {
         }
     }
 
+    private AuthorView(Message message, boolean replyAll) {
+        this();
+
+        this.message = message;
+        setReply(replyAll);
+    }
+
     @Override
     public Pane getView() {
         return rootPane;
@@ -64,6 +73,10 @@ public class AuthorView implements SofView {
 
     public static void show() {
         ClientView.setCenter(new AuthorView().getView());
+    }
+
+    public static void show(Message message, boolean replyAll) {
+        ClientView.setCenter(new AuthorView(message, replyAll).getView());
     }
 
     @FXML
@@ -205,5 +218,47 @@ public class AuthorView implements SofView {
         addressField.setDisable(disable);
         subjectField.setDisable(disable);
         messageField.setDisable(disable);
+    }
+
+    private void setReply(boolean replyAll) {
+        try {
+            subjectField.setText("Re: " + message.getSubject());
+            addressField.setText(getReplyAddress(replyAll));
+
+            String html = BodyParser.extractHtml(message.getContent());
+            String reply = "<br><br>On " + message.getSentDate() + ", " + message.getFrom()[0] + " wrote:<br>";
+            messageField.setHtmlText(reply + html);
+        } catch (Exception e) {
+            System.out.println("Failed to set subject: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Gets the reply address for the email in a comma-separated list.
+     *
+     * @param replyAll True to include all recipients in the reply
+     * @return The reply addresses in a comma-separated list
+     */
+    private String getReplyAddress(boolean replyAll) {
+        try {
+            ArrayList<Address> addresses = new ArrayList<>();
+            addresses.add(message.getFrom()[0]);
+            if (replyAll) {
+                Collections.addAll(addresses, message.getRecipients(Message.RecipientType.TO));
+            }
+
+            StringBuilder addressList = new StringBuilder();
+            for (Address address : addresses) {
+                addressList.append(address.toString().replaceAll(".+ <(.+)>", "$1"));
+                addressList.append(", ");
+            }
+
+            addressList.delete(addressList.length() - 2, addressList.length()); // remove the last comma and space
+
+            return addressList.toString();
+        } catch (Exception e) {
+            System.out.println("Failed to get reply address: " + e.getMessage());
+            return "";
+        }
     }
 }
