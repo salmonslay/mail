@@ -23,7 +23,9 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
+/**
+ * A view for displaying the user's inbox.
+ */
 public class InboxView implements SofView {
     private static InboxView instance;
     @FXML
@@ -57,6 +59,9 @@ public class InboxView implements SofView {
         }
     }
 
+    /**
+     * Fetches emails from the user's inbox and updates the view with the emails.
+     */
     protected void fetchEmails() {
         buttonLeft.setDisable(true);
         pageLabel.setText("...");

@@ -18,6 +18,10 @@ import kiwi.sofia.mail.task.DownloadAttachmentsTask;
 import java.io.File;
 import java.util.prefs.Preferences;
 
+/**
+ * A view for displaying an email. Contains information about the email, the email content, and buttons for replying,
+ * forwarding, and downloading attachments.
+ */
 public class EmailView implements SofView {
     private final Pane rootPane;
     private final Message message;
@@ -148,6 +152,11 @@ public class EmailView implements SofView {
         ClientView.setCenter(new EmailView(message).getView());
     }
 
+    /**
+     * Gets the recipients of the email.
+     *
+     * @return The recipients of the email in the format "to email1, email2, ...", or "to me" if the recipients are null.
+     */
     private String getToText() {
         try {
             Address[] recipients = message.getAllRecipients();

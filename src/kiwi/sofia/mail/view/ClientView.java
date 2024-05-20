@@ -6,11 +6,14 @@ import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
+/**
+ * The main view for the program, used to nest other views as long as the user is logged in.
+ * This view also maintains the menu bar.
+ */
 public class ClientView implements SofView {
     private static ClientView instance;
     @FXML
     private Pane rootPane;
-
     @FXML
     private BorderPane borderPane;
 
@@ -46,28 +49,28 @@ public class ClientView implements SofView {
         return instance;
     }
 
-    public static void showInbox(){
+    public static void showInbox() {
         getInstance().getBorderPane().setCenter(InboxView.getInstance().getView());
     }
 
     @FXML
-    public void actionWriteEmail(){
+    public void actionWriteEmail() {
         AuthorView.show();
     }
 
     @FXML
-    public void actionLogOut(){
+    public void actionLogOut() {
         LoginView.clearCredentials();
         rootPane.getScene().setRoot(new LoginView().getView());
     }
 
     @FXML
-    public void actionQuit(){
+    public void actionQuit() {
         System.exit(0);
     }
 
     @FXML
-    public void actionOpenInbox(){
+    public void actionOpenInbox() {
         showInbox();
     }
 }

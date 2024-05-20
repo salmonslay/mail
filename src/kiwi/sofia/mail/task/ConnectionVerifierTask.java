@@ -4,6 +4,9 @@ import jakarta.mail.*;
 import javafx.concurrent.Task;
 import kiwi.sofia.mail.common.*;
 
+/**
+ * Task verifying the connection to the SMTP and IMAP servers.
+ */
 public class ConnectionVerifierTask extends Task<Void> {
 
     @Override

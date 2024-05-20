@@ -23,6 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
 
+/**
+ * The authoring view is used to compose and send emails.
+ * It can be opened from a blank state, or by replying to / forwarding an email.
+ */
 public class AuthorView implements SofView {
     @FXML
     private Pane rootPane;
@@ -67,6 +71,10 @@ public class AuthorView implements SofView {
         ClientView.showInbox();
     }
 
+    /**
+     * Opens a file chooser dialog to attach files to the email.
+     * Opening the chooser twice will only attach the files from the second dialog.
+     */
     @FXML
     public void actionAttachFiles() {
         Preferences prefs = Preferences.userNodeForPackage(AuthorView.class);
@@ -186,6 +194,11 @@ public class AuthorView implements SofView {
         return new Pair<>(recipients.toArray(new InternetAddress[0]), null);
     }
 
+    /**
+     * Enable / disable the buttons and fields while sending an email.
+     *
+     * @param disable True to disable, false to enable
+     */
     private void setButtons(boolean disable) {
         sendButton.setDisable(disable);
         attachButton.setDisable(disable);
