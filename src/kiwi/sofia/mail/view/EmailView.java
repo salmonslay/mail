@@ -16,6 +16,8 @@ import kiwi.sofia.mail.common.BodyParser;
 import kiwi.sofia.mail.task.DownloadAttachmentsTask;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 import java.util.prefs.Preferences;
 
 /**
@@ -46,6 +48,8 @@ public class EmailView implements SofView {
     private Label toLabel;
     @FXML
     private Circle circle;
+    private String attachmentsPath;
+    private String html;
 
     public EmailView(Message message) {
         rootPane = new GridPane();
@@ -81,7 +85,8 @@ public class EmailView implements SofView {
     }
 
     private void setBody(Object body) {
-        webView.getEngine().loadContent(BodyParser.extractHtml(body));
+        html = BodyParser.extractHtml(body);
+        webView.getEngine().loadContent(html);
     }
 
     @Override
@@ -127,13 +132,18 @@ public class EmailView implements SofView {
 
         DownloadAttachmentsTask task = new DownloadAttachmentsTask(content, path);
         task.onSucceededProperty().set(event -> {
-            if (task.getValue()) {
-                try {
-                    Runtime.getRuntime().exec("explorer.exe /open," + path);
-                } catch (IOException e) {
-                    System.out.println("Failed to open directory: " + e.getMessage());
-                }
+            Map<String, String> attachments = task.getValue();
+            if (task.getValue() == null)
+                return;
+
+            try {
+                Runtime.getRuntime().exec("explorer.exe /open," + path);
+            } catch (IOException e) {
+                System.out.println("Failed to open directory: " + e.getMessage());
             }
+
+            attachmentsPath = path;
+            displayAttachments(attachments);
         });
 
         new Thread(task).start();
@@ -183,5 +193,21 @@ public class EmailView implements SofView {
         } catch (Exception ignored) {
         }
         return "to me";
+    }
+
+    /**
+     * Replaces attachment CIDs with a local path to the attachment.
+     *
+     * @param attachments A map of attachment CIDs and their corresponding file names.
+     */
+    private void displayAttachments(Map<String, String> attachments) {
+        String regex = "src=\"cid:(.+?)\"";
+        attachmentsPath = attachmentsPath.replaceAll("\\\\", "/"); // Replace backslashes with forward slashes
+        String replacement = "src=\"file://" + attachmentsPath + "/$1\""; // Set the src attribute to the CID
+        html = html.replaceAll(regex, replacement);
+
+        attachments.forEach((cid, name) -> html = html.replaceAll(cid, name)); // Replace the CID with the file name
+
+        webView.getEngine().loadContent(html);
     }
 }

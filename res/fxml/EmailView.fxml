@@ -62,7 +62,7 @@
             </FlowPane>
          </right>
          <left>
-            <FlowPane alignment="CENTER_LEFT" prefHeight="32.0" BorderPane.alignment="CENTER">
+            <FlowPane alignment="CENTER_LEFT" prefHeight="32.0" prefWrapLength="600.0" BorderPane.alignment="CENTER">
                <children>
                   <Button mnemonicParsing="false" onAction="#actionGoBackToInbox" text="Go back">
                      <FlowPane.margin>
@@ -76,7 +76,7 @@
                         </StackedFontIcon>
                      </graphic>
                   </Button>
-                  <Button fx:id="attachmentsButton" layoutX="25.0" layoutY="14.0" mnemonicParsing="false" onAction="#actionDownloadAttachments" text="Download attachments">
+                  <Button fx:id="attachmentsButton" layoutX="25.0" layoutY="14.0" mnemonicParsing="false" onAction="#actionDownloadAttachments" text="Download and display attachments">
                      <FlowPane.margin>
                         <Insets left="10.0" />
                      </FlowPane.margin>

@@ -3,10 +3,12 @@ package kiwi.sofia.mail.task;
 import javafx.concurrent.Task;
 import kiwi.sofia.mail.common.BodyParser;
 
+import java.util.Map;
+
 /**
  * Task for downloading attachments from an email.
  */
-public class DownloadAttachmentsTask extends Task<Boolean> {
+public class DownloadAttachmentsTask extends Task<Map<String, String>> {
     private final Object content;
     private final String path;
 
@@ -16,7 +18,7 @@ public class DownloadAttachmentsTask extends Task<Boolean> {
     }
 
     @Override
-    protected Boolean call() throws Exception {
+    protected Map<String, String> call() throws Exception {
         return BodyParser.downloadAttachments(content, path);
     }
 }

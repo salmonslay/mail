@@ -1,13 +1,13 @@
 package kiwi.sofia.mail.common;
 
-import jakarta.mail.BodyPart;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Multipart;
+import jakarta.mail.*;
 import jakarta.mail.internet.MimeBodyPart;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Helper functions to parse the body of an email.
@@ -87,11 +87,12 @@ public class BodyParser {
      *
      * @param body The body of the email.
      * @param path The path to save the attachments to.
-     * @return true if attachments were saved successfully, false otherwise
+     * @return a map of attachment cids and their corresponding file names, or null if no attachments were found.
      */
-    public static boolean downloadAttachments(Object body, String path) {
+    public static Map<String, String> downloadAttachments(Object body, String path) {
+        Map<String, String> attachments = new HashMap<>();
         if (!(body instanceof Multipart))
-            return false;
+            return null;
 
         try {
             Multipart multipart = (Multipart) body;
@@ -101,14 +102,27 @@ public class BodyParser {
                 if (part.isMimeType("multipart/alternative") || part.isMimeType("multipart/related")) {
                     downloadAttachments(part.getContent(), path);
                 } else if (contentType.contains("name=")) {
-                    System.out.printf("Saving attachment %s\n", part.getFileName());
                     saveFile(part, part.getFileName(), path);
+
+                    // Save file name from content ID if available
+                    Enumeration<Header> headers = part.getAllHeaders();
+                    while (headers.hasMoreElements()) {
+                        Header header = headers.nextElement();
+                        if (header.getName().equals("Content-ID") || header.getName().equals("X-Attachment-Id")) {
+                            String regex = "<(.+?)>";
+                            String cid = header.getValue().replaceAll(regex, "$1");
+                            String fileName = part.getFileName();
+
+                            attachments.put(cid, fileName);
+                            System.out.printf("Saving attachment %s, CID %s\n", fileName, cid);
+                        }
+                    }
                 }
             }
-            return true;
+            return attachments;
         } catch (MessagingException | IOException e) {
             System.out.println("Failed to save attachments: " + e.getMessage());
-            return false;
+            return null;
         }
     }
 
