@@ -161,6 +161,7 @@ public class AuthorView implements SofView {
 
                     Transport.send(message);
                     updateMessage("Email sent successfully");
+                    InboxView.getInstance().fetchEmails();
                     return message;
                 } catch (Exception e) {
                     updateMessage("Failed to send email: " + e.getMessage());
