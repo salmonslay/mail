@@ -53,24 +53,22 @@ public class BodyParser {
                 } else {
                     System.out.println("No body found");
 
-                    if (getHtml)
-                        return "<h1>Failed to load email body</h1>";
-                    else
-                        return "Failed to load email body";
+                    return createError("Failed to load email body", "", getHtml);
                 }
 
             } catch (MessagingException | IOException e) {
-                if (getHtml)
-                    return "<h1>Failed to load email body</h1>" + e.getMessage();
-                else
-                    return "Failed to load email body: " + e.getMessage();
+                return createError("Failed to load email body", e.getMessage(), getHtml);
             }
         } else {
-            if (getHtml)
-                return "<h1>Failed to load email body</h1>Type " + body.getClass().getName() + " is not supported.";
-            else
-                return "Failed to load email body: Type " + body.getClass().getName() + " is not supported.";
+            return createError("Failed to load email body", "Type " + body.getClass().getName() + " is not supported.", getHtml);
         }
+    }
+
+    private static String createError(String header, String body, boolean html) {
+        if (html)
+            return "<h1>" + header + "</h1>" + body;
+        else
+            return header + "\n" + body;
     }
 
     /**
