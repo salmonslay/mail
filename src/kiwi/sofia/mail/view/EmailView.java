@@ -125,7 +125,18 @@ public class EmailView implements SofView {
         String path = window.getAbsolutePath();
         prefs.put("lastPath", path);
 
-        new Thread(new DownloadAttachmentsTask(content, path, true)).start();
+        DownloadAttachmentsTask task = new DownloadAttachmentsTask(content, path);
+        task.onSucceededProperty().set(event -> {
+            if (task.getValue()) {
+                try {
+                    Runtime.getRuntime().exec("explorer.exe /open," + path);
+                } catch (IOException e) {
+                    System.out.println("Failed to open directory: " + e.getMessage());
+                }
+            }
+        });
+
+        new Thread(task).start();
     }
 
     /**
