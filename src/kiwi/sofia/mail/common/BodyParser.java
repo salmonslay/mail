@@ -2,9 +2,12 @@ package kiwi.sofia.mail.common;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.MimeBodyPart;
+import org.apache.commons.lang3.time.StopWatch;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,7 +92,7 @@ public class BodyParser {
      * @param path The path to save the attachments to.
      * @return a map of attachment cids and their corresponding file names, or null if no attachments were found.
      */
-    public static Map<String, String> downloadAttachments(Object body, String path) {
+    public static Map<String, String> downloadAttachments(Object body, String path, Integer messageHashCode) {
         Map<String, String> attachments = new HashMap<>();
         if (!(body instanceof Multipart))
             return null;
@@ -100,10 +103,8 @@ public class BodyParser {
                 BodyPart part = multipart.getBodyPart(i);
                 String contentType = part.getContentType().toLowerCase();
                 if (part.isMimeType("multipart/alternative") || part.isMimeType("multipart/related")) {
-                    downloadAttachments(part.getContent(), path);
+                    downloadAttachments(part.getContent(), path, messageHashCode);
                 } else if (contentType.contains("name=")) {
-                    saveFile(part, part.getFileName(), path);
-
                     // Save file name from content ID if available
                     Enumeration<Header> headers = part.getAllHeaders();
                     while (headers.hasMoreElements()) {
@@ -115,6 +116,9 @@ public class BodyParser {
 
                             attachments.put(cid, fileName);
                             System.out.printf("Saving attachment %s, CID %s\n", fileName, cid);
+                            saveFile(part, part.getFileName(), path, messageHashCode);
+
+                            break;
                         }
                     }
                 }
@@ -129,17 +133,25 @@ public class BodyParser {
     /**
      * Saves an attachment to the specified path.
      *
-     * @param part The attachment to save.
-     * @param name The name of the attachment.
-     * @param path The path to save the attachment to.
+     * @param part     The attachment to save.
+     * @param fileName The fileName of the attachment.
+     * @param dirPath  The path to save the attachment to.
      */
-    private static void saveFile(BodyPart part, String name, String path) {
+    private static void saveFile(BodyPart part, String fileName, String dirPath, Integer messageHashCode) {
         try {
-            ((MimeBodyPart) part).saveFile(path + "/" + name);
-            System.out.printf("Saved attachment %s\n", name);
+            Path path = Path.of(dirPath, fileName);
+            ((MimeBodyPart) part).saveFile(path.toFile());
+
+            Path tempPath = getTempPath(fileName, messageHashCode);
+            Files.createDirectories(tempPath.getParent());
+            Files.copy(path, tempPath);
         } catch (IOException | MessagingException e) {
             System.out.println("Failed to save attachment: " + e.getMessage());
         }
+    }
+
+    public static Path getTempPath(String fileName, Integer messageHashCode) {
+        return Path.of(System.getProperty("java.io.tmpdir"), "sofmail", messageHashCode.toString(), fileName);
     }
 
     public static String extractPlainText(Object body) {

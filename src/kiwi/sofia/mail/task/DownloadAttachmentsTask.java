@@ -11,14 +11,16 @@ import java.util.Map;
 public class DownloadAttachmentsTask extends Task<Map<String, String>> {
     private final Object content;
     private final String path;
+    private final Integer messageHashCode;
 
-    public DownloadAttachmentsTask(Object content, String path) {
+    public DownloadAttachmentsTask(Object content, String path, Integer messageHashCode) {
         this.content = content;
         this.path = path;
+        this.messageHashCode = messageHashCode;
     }
 
     @Override
     protected Map<String, String> call() throws Exception {
-        return BodyParser.downloadAttachments(content, path);
+        return BodyParser.downloadAttachments(content, path, messageHashCode);
     }
 }

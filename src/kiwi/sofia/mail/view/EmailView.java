@@ -130,7 +130,7 @@ public class EmailView implements SofView {
         String path = window.getAbsolutePath();
         prefs.put("lastPath", path);
 
-        DownloadAttachmentsTask task = new DownloadAttachmentsTask(content, path);
+        DownloadAttachmentsTask task = new DownloadAttachmentsTask(content, path, BodyParser.getHashCode(message));
         task.onSucceededProperty().set(event -> {
             Map<String, String> attachments = task.getValue();
             if (task.getValue() == null)
