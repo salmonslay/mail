@@ -125,7 +125,7 @@ public class EmailView implements SofView {
         String path = window.getAbsolutePath();
         prefs.put("lastPath", path);
 
-        new Thread(new DownloadAttachmentsTask(content, path)).start();
+        new Thread(new DownloadAttachmentsTask(content, path, true)).start();
     }
 
     /**
