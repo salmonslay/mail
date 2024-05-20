@@ -10,6 +10,9 @@ import javafx.scene.layout.GridPane;
 import kiwi.sofia.mail.view.ClientView;
 import kiwi.sofia.mail.view.EmailView;
 
+/**
+ * A clickable cell in the email list. Opens the email when clicked.
+ */
 public class EmailCell extends ListCell<Message> {
 
     @FXML

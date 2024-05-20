@@ -9,6 +9,9 @@ import org.jsoup.Jsoup;
 
 import java.io.IOException;
 
+/**
+ * Helper functions to parse the body of an email.
+ */
 public class BodyParser {
 
     /**
@@ -64,6 +67,14 @@ public class BodyParser {
         }
     }
 
+    /**
+     * Creates an error message.
+     *
+     * @param header The header of the error message.
+     * @param body   The body of the error message.
+     * @param html   Whether to return the error message as HTML or plain text.
+     * @return The error message.
+     */
     private static String createError(String header, String body, boolean html) {
         if (html)
             return "<h1>" + header + "</h1>" + body;
