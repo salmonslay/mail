@@ -97,7 +97,7 @@ public class InboxView implements SofView {
 
         fetchEmailsTask.setOnFailed(event -> {
             statusLabel.textProperty().unbind();
-            statusLabel.setText("Could not fetch emails.\n" + fetchEmailsTask.getException().getMessage());
+            statusLabel.setText("Failed to fetch emails.\n" + fetchEmailsTask.getException().getMessage());
             System.out.println("Failed to fetch emails: " + fetchEmailsTask.getException().getMessage());
 
             buttonReload.setDisable(false);
@@ -181,7 +181,7 @@ public class InboxView implements SofView {
             ImapManager.getCachedInbox().fetch(messages, fetchProfile);
             messageObservableList.addAll(messages);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            System.out.println("Failed to fetch messages: " + e.getMessage());
         }
 
         updatePageLabel();
@@ -208,9 +208,8 @@ public class InboxView implements SofView {
                 try {
                     Thread.sleep(15000);
                     Platform.runLater(this::fetchEmails);
-                    System.out.println("Refreshed inbox");
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    System.out.println("Failed to sleep: " + e.getMessage());
                 }
             }
         }).start();
