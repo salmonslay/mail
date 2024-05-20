@@ -12,12 +12,13 @@ import java.io.IOException;
 public class BodyParser {
 
     /**
-     * Converts the body of an email to HTML. Blocking if the content hasn't been loaded yet.
+     * Converts the body of an email to HTML or plain text. Blocking if the content hasn't been loaded yet.
      *
-     * @param body The body of the email.
-     * @return The body of the email as HTML.
+     * @param body    The body of the email.
+     * @param getHtml Whether to return the body as HTML or plain text.
+     * @return The body of the email.
      */
-    public static String extractHtml(Object body) {
+    public static String parse(Object body, boolean getHtml) {
         if (body instanceof String) {
             return (String) body;
         } else if (body instanceof Multipart) {
@@ -43,22 +44,32 @@ public class BodyParser {
                     }
                 }
 
-                if (!html.isEmpty()) {
-                    System.out.println("HTML body found");
+                if (!html.isEmpty() && getHtml) {
+                    System.out.println("Returning requested and found HTML body");
                     return html.toString();
                 } else if (!plainText.isEmpty()) {
-                    System.out.println("Plain text body found");
+                    System.out.printf("Returning plain text body, requested? %b\n", getHtml);
                     return plainText.toString();
                 } else {
                     System.out.println("No body found");
-                    return "<h1>Failed to load email body</h1>";
+
+                    if (getHtml)
+                        return "<h1>Failed to load email body</h1>";
+                    else
+                        return "Failed to load email body";
                 }
 
             } catch (MessagingException | IOException e) {
-                return "<h1>Failed to load email body</h1>" + e.getMessage();
+                if (getHtml)
+                    return "<h1>Failed to load email body</h1>" + e.getMessage();
+                else
+                    return "Failed to load email body: " + e.getMessage();
             }
         } else {
-            return "<h1>Failed to load email body</h1>Type " + body.getClass().getName() + " is not supported.";
+            if (getHtml)
+                return "<h1>Failed to load email body</h1>Type " + body.getClass().getName() + " is not supported.";
+            else
+                return "Failed to load email body: Type " + body.getClass().getName() + " is not supported.";
         }
     }
 
@@ -108,9 +119,12 @@ public class BodyParser {
         }
     }
 
-    public static String toPlainText(Object body) {
-        String html = extractHtml(body);
-        return Jsoup.parse(html).wholeText();
+    public static String extractPlainText(Object body) {
+        return parse(body, false);
+    }
+
+    public static String extractHtml(Object body) {
+        return parse(body, true);
     }
 
     /**
