@@ -48,6 +48,19 @@ public class ImapManager {
     }
 
     /**
+     * Blocking.
+     *
+     * @return all folders in the user's inbox, or null if an error occurred
+     */
+    public static Folder[] getFolders() {
+        try {
+            return getStoreExc().getA().getDefaultFolder().list("*");
+        } catch (MessagingException e) {
+            return null;
+        }
+    }
+
+    /**
      * This method is always blocking.
      *
      * @return the user's inbox folder through IMAP
