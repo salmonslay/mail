@@ -7,8 +7,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
+import kiwi.sofia.mail.common.AuthorMode;
+import kiwi.sofia.mail.view.AuthorView;
 import kiwi.sofia.mail.view.ClientView;
 import kiwi.sofia.mail.view.EmailView;
+import kiwi.sofia.mail.view.InboxView;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.text.DateFormat;
@@ -85,10 +88,14 @@ public class EmailCell extends ListCell<Message> {
 
     @FXML
     protected void openEmail() {
+        boolean isDraft = InboxView.getInstance().getFolderName().contains("Drafts");
         try {
-            System.out.printf("Opening email with subject: %s\n", message.getSubject());
+            System.out.printf("Opening email %s with subject: %s\n", isDraft ? "draft" : "", message.getSubject());
 
-            EmailView.show(message);
+            if (isDraft)
+                AuthorView.show(message, AuthorMode.EDIT);
+                else
+                EmailView.show(message);
         } catch (MessagingException e) {
             System.out.println(e.getMessage());
         }

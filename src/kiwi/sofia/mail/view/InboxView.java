@@ -244,4 +244,8 @@ public class InboxView implements SofView {
     private void updatePageLabel() {
         pageLabel.setText(MessageFormat.format("{0} - {1} of {2}", currentPage * 50 + 1, Math.min((currentPage + 1) * 50, messages.length), messages.length));
     }
+
+    public String getFolderName() {
+        return folderName;
+    }
 }

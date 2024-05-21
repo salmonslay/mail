@@ -192,15 +192,22 @@ public class AuthorView implements SofView {
             String subject = message.getSubject();
             if (mode == AuthorMode.FORWARD)
                 subjectField.setText("Fwd: " + subject);
-            else
+            else if (mode == AuthorMode.REPLY || mode == AuthorMode.REPLY_ALL)
                 subjectField.setText("Re: " + subject);
+            else
+                subjectField.setText(subject);
 
             if (mode != AuthorMode.FORWARD)
                 setReplyAddress(mode == AuthorMode.REPLY_ALL);
 
             String html = BodyParser.extractHtml(message.getContent());
-            String reply = "<br><br>On " + message.getSentDate() + ", " + message.getFrom()[0] + " wrote:<br>";
-            messageField.setHtmlText(reply + html);
+
+            if (mode == AuthorMode.EDIT) {
+                messageField.setHtmlText(html);
+            } else {
+                String reply = "<br><br>On " + message.getSentDate() + ", " + message.getFrom()[0] + " wrote:<br>";
+                messageField.setHtmlText(reply + html);
+            }
         } catch (Exception e) {
             System.out.println("Failed to set subject: " + e.getMessage());
         }
