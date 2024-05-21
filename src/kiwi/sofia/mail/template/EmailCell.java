@@ -19,6 +19,7 @@ import java.util.Locale;
 /**
  * A clickable cell in the email list. Opens the email when clicked.
  */
+@SuppressWarnings("deprecation") // getYear, whatever
 public class EmailCell extends ListCell<Message> {
 
     @FXML
@@ -51,11 +52,24 @@ public class EmailCell extends ListCell<Message> {
             this.message = message;
 
             subjectLabel.setText(message.getSubject());
-            fromLabel.setText(message.getFrom()[0].toString());
 
+            // Display name as sender if possible, fallback to email address
+            String fromPattern = "\"?(.+?)\"? (<.+>)";
+            String from = message.getFrom()[0].toString();
+            if (from.matches(fromPattern)) {
+                from = from.replaceAll(fromPattern, "$1");
+            }
+            fromLabel.setText(from);
+
+            // Display date as 9:30 AM if today, or Mar 15 if not.
             Date date = message.getSentDate();
             Locale locale = new Locale("en", "US");
-            String pattern = DateUtils.isSameDay(new Date(), date) ? "K:mm a" : "MMM d"; // 9:30 AM or Mar 15
+            String pattern = DateUtils.isSameDay(new Date(), date) ? "K:mm a" : "MMM d";
+
+            // We're displaying year if not this year
+            if (date.getYear() != new Date().getYear())
+                pattern += ", yyyy";
+
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, locale);
             dateLabel.setText(simpleDateFormat.format(date));
 
