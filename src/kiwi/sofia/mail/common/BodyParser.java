@@ -102,8 +102,12 @@ public class BodyParser {
             for (int i = 0; i < multipart.getCount(); i++) {
                 BodyPart part = multipart.getBodyPart(i);
                 String contentType = part.getContentType().toLowerCase();
+
                 if (part.isMimeType("multipart/alternative") || part.isMimeType("multipart/related")) {
-                    downloadAttachments(part.getContent(), path, messageHashCode); // TODO: result of this is ignored
+                    Map<String, String> map = downloadAttachments(part.getContent(), path, messageHashCode);
+                    if (map != null)
+                        attachments.putAll(map); // add all attachments from nested multipart
+
                 } else if (contentType.contains("name=")) {
                     // Save file name from content ID if available
                     Enumeration<Header> headers = part.getAllHeaders();
