@@ -64,7 +64,9 @@ public class EmailView implements SofView {
             content = message.getContent();
             setBody(content);
 
-            attachmentsButton.setDisable(BodyParser.attachmentCount(message) == 0);
+            int attachmentCount = BodyParser.attachmentCount(message);
+            attachmentsButton.setDisable(attachmentCount == 0);
+            attachmentsButton.setText("Download and display " + attachmentCount + " attachment" + (attachmentCount == 1 ? "" : "s"));
             replyAllButton.setDisable(message.getAllRecipients() != null && message.getAllRecipients().length < 2);
 
             String regex = "\"?(.+?)\"? (<.+>)"; // Matches "Name" <email>, without quotes including angle brackets

@@ -103,7 +103,7 @@ public class BodyParser {
                 BodyPart part = multipart.getBodyPart(i);
                 String contentType = part.getContentType().toLowerCase();
                 if (part.isMimeType("multipart/alternative") || part.isMimeType("multipart/related")) {
-                    downloadAttachments(part.getContent(), path, messageHashCode);
+                    downloadAttachments(part.getContent(), path, messageHashCode); // TODO: result of this is ignored
                 } else if (contentType.contains("name=")) {
                     // Save file name from content ID if available
                     Enumeration<Header> headers = part.getAllHeaders();
@@ -175,23 +175,35 @@ public class BodyParser {
         return parse(body, true);
     }
 
+    private static int attachmentCount(Object body, int startFrom) {
+        try {
+            if (body instanceof Message)
+                body = ((Message) body).getContent();
+
+            Multipart multipart = (Multipart) body;
+            for (int i = 0; i < multipart.getCount(); i++) {
+                BodyPart part = multipart.getBodyPart(i);
+                String contentType = part.getContentType().toLowerCase();
+
+                if (part.isMimeType("multipart/alternative") || part.isMimeType("multipart/related"))
+                    startFrom += attachmentCount(part, startFrom);
+                else if (contentType.contains("name="))
+                    startFrom++;
+            }
+        } catch (Exception ignored) {
+        }
+
+        return startFrom;
+    }
+
     /**
      * Checks if the message has any attachments, and if so returns the number of attachments.
      *
      * @param msg The message to check for attachments.
      * @return The number of attachments in the message.
-     * @see <a href="https://javaee.github.io/javamail/FAQ#hasattach">Source</a>
      */
     public static int attachmentCount(Message msg) {
-        try {
-            if (msg.isMimeType("multipart/mixed") || msg.isMimeType("multipart/related")) {
-                Multipart mp = (Multipart) msg.getContent();
-                return mp.getCount();
-            }
-        } catch (MessagingException | IOException e) {
-            System.out.println("Failed to check for attachments: " + e.getMessage());
-        }
-        return 0;
+        return attachmentCount(msg, 0);
     }
 
     /**
