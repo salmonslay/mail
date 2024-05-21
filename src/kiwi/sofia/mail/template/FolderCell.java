@@ -1,7 +1,6 @@
 package kiwi.sofia.mail.template;
 
 import jakarta.mail.Folder;
-import jakarta.mail.Message;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -11,6 +10,10 @@ import kiwi.sofia.mail.view.InboxView;
 import kiwi.sofia.mail.view.SofView;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+/**
+ * A cell that contains an icon and a label for a specific folder.
+ * Can be clicked to display the emails in that folder.
+ */
 public class FolderCell extends ListCell<Folder> implements SofView {
     @FXML
     private Pane rootPane;
@@ -18,6 +21,10 @@ public class FolderCell extends ListCell<Folder> implements SofView {
     private Label folderLabel;
     @FXML
     private FontIcon icon;
+    
+    /**
+     * The folder of this cell.
+     */
     private Folder folder;
 
     @Override
@@ -35,13 +42,15 @@ public class FolderCell extends ListCell<Folder> implements SofView {
             String pattern = "\\[Gmail\\]\\/(.+)";
             String folderName = folder.getFullName();
 
+            // Special case for Gmail folders & INBOX
             if (folderName.matches(pattern) || folderName.equals("INBOX")) {
-                // Special case for Gmail folders & INBOX
-                if (!folderName.equals("INBOX"))
-                    folderName = folderName.replaceAll(pattern, "$1");
+                if (folderName.equals("INBOX"))
+                    folderName = "Inbox"; // We don't want an uppercase display name
                 else
-                    folderName = "Inbox";
+                    folderName = folderName.replaceAll(pattern, "$1"); // remove the [Gmail]/ prefix
 
+
+                // Set icon based on folder name
                 if (folderName.equalsIgnoreCase("all mail"))
                     icon.setIconLiteral("fa-envelope-o");
                 else if (folderName.equalsIgnoreCase("drafts"))
@@ -74,6 +83,9 @@ public class FolderCell extends ListCell<Folder> implements SofView {
         return rootPane;
     }
 
+    /**
+     * Displays the emails from this folder in the inbox.
+     */
     @FXML
     protected void actionSetFolder() {
         InboxView.showFolder(folder);

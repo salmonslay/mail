@@ -9,12 +9,10 @@ import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
 import kiwi.sofia.mail.common.AuthorMode;
 import kiwi.sofia.mail.view.AuthorView;
-import kiwi.sofia.mail.view.ClientView;
 import kiwi.sofia.mail.view.EmailView;
 import kiwi.sofia.mail.view.InboxView;
 import org.apache.commons.lang3.time.DateUtils;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -33,7 +31,10 @@ public class EmailCell extends ListCell<Message> {
     private Label dateLabel;
     @FXML
     private GridPane gridPane;
-    private FXMLLoader loader;
+
+    /**
+     * The email message of this cell.
+     */
     private Message message;
 
     @Override
@@ -41,20 +42,15 @@ public class EmailCell extends ListCell<Message> {
         super.updateItem(message, empty);
 
         if (empty) {
-            setGraphic(null);
+            setGraphic(null); // clear this cell if empty
             return;
         }
 
-        if (loader == null) {
-            loader = new FXMLLoader(getClass().getResource("/fxml/EmailCell.fxml"));
-            loader.setController(this);
-
-            try {
-                loader.load();
-            } catch (Exception ignored) {
-            }
-        }
         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/EmailCell.fxml"));
+            loader.setController(this);
+            loader.load();
+
             this.message = message;
 
             subjectLabel.setText(message.getSubject());
@@ -82,22 +78,25 @@ public class EmailCell extends ListCell<Message> {
             setGraphic(gridPane);
             setText(null);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Failed to load EmailCell.fxml: " + e.getMessage());
         }
     }
 
+    /**
+     * Open this email in the appropriate view (AuthorView for drafts, EmailView for received emails).
+     */
     @FXML
     protected void openEmail() {
         boolean isDraft = InboxView.getInstance().getFolderName().contains("Drafts");
         try {
-            System.out.printf("Opening email %s with subject: %s\n", isDraft ? "draft" : "", message.getSubject());
+            System.out.printf("Opening %s with subject: %s\n", isDraft ? "draft" : "email", message.getSubject());
 
             if (isDraft)
                 AuthorView.show(message, AuthorMode.EDIT);
-                else
+            else
                 EmailView.show(message);
         } catch (MessagingException e) {
-            System.out.println(e.getMessage());
+            System.out.printf("Failed to open %s: %s\n", isDraft ? "draft" : "email", e.getMessage());
         }
     }
 }
