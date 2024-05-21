@@ -17,17 +17,20 @@ import org.jsoup.Jsoup;
 import java.io.File;
 import java.util.List;
 
+/**
+ * Task to construct and send a mime email.
+ */
 public class SendEmailTask extends Task<MimeMessage> {
     private final String addresses;
     private final String subject;
     private final String body;
-    private final List<File> files;
+    private final List<File> attachments;
 
-    public SendEmailTask(String addresses, String subject, String body, List<File> files) {
+    public SendEmailTask(String addresses, String subject, String body, List<File> attachments) {
         this.addresses = addresses;
         this.subject = subject;
         this.body = body;
-        this.files = files;
+        this.attachments = attachments;
     }
 
     @Override
@@ -36,6 +39,7 @@ public class SendEmailTask extends Task<MimeMessage> {
             updateMessage("Sending message...");
             ConnectionRecord set = ConnectionRecord.getSmtpConnectionSet();
 
+            // Create new message
             MimeMessage message = new MimeMessage(SmtpManager.getCachedSession());
             message.setFrom(new InternetAddress(set.username(), set.displayName()));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(addresses));
@@ -46,13 +50,14 @@ public class SendEmailTask extends Task<MimeMessage> {
             htmlBody.setContent(html, "text/html");
 
             BodyPart plainBody = new MimeBodyPart();
-            plainBody.setContent(Jsoup.parse(body).wholeText(), "text/plain");
+            String plain = Jsoup.parse(body).wholeText(); // parse html to plain text
+            plainBody.setContent(plain, "text/plain");
 
             Multipart multipart = new MimeMultipart("alternative");
             multipart.addBodyPart(plainBody);
-            multipart.addBodyPart(htmlBody); // most important part last
+            multipart.addBodyPart(htmlBody); // most important part last - plain is only fallback
 
-            for (File file : files) {
+            for (File file : attachments) {
                 MimeBodyPart attachment = new MimeBodyPart();
                 attachment.attachFile(file);
                 multipart.addBodyPart(attachment);
@@ -62,7 +67,7 @@ public class SendEmailTask extends Task<MimeMessage> {
 
             Transport.send(message);
             updateMessage("Email sent successfully");
-            InboxView.getInstance().fetchEmails();
+            InboxView.getInstance().fetchEmails(); // refresh the inbox
             return message;
         } catch (Exception e) {
             updateMessage("Failed to send email: " + e.getMessage());

@@ -5,6 +5,9 @@ import javafx.concurrent.Task;
 import jakarta.mail.Message;
 import kiwi.sofia.mail.common.ImapManager;
 
+/**
+ * A task that fetches all emails from a folder.
+ */
 public class FetchEmailsTask extends Task<Message[]> {
     private final String folderName;
 
