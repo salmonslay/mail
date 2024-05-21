@@ -65,6 +65,7 @@ public class EmailView implements SofView {
             content = message.getContent();
             setBody(content);
 
+            // Disable attachment button if there are no attachments, and set the count
             int attachmentCount = BodyParser.attachmentCount(message);
             attachmentsButton.setDisable(attachmentCount == 0);
             attachmentsButton.setText("Download and display " + attachmentCount + " attachment" + (attachmentCount == 1 ? "" : "s"));
@@ -72,15 +73,15 @@ public class EmailView implements SofView {
 
             String regex = "\"?(.+?)\"? (<.+>)"; // Matches "Name" <email>, without quotes including angle brackets
             String from = message.getFrom()[0].toString();
-            senderLabel.setText(from.replaceAll(regex, "$1"));
-            emailLabel.setText(from.replaceAll(regex, "$2"));
+            senderLabel.setText(from.replaceAll(regex, "$1")); // name (without surrounding quotes)
+            emailLabel.setText(from.replaceAll(regex, "$2")); // <email>
             dateLabel.setText(message.getSentDate().toString());
 
             setCircle(from);
 
             String toText = getToText();
             toLabel.setText(toText);
-            toLabel.setTooltip(new Tooltip(toText));
+            toLabel.setTooltip(new Tooltip(toText)); // in case it's too long to display the user can hover as a fallback
 
             displayAttachments();
 
@@ -90,11 +91,16 @@ public class EmailView implements SofView {
         }
     }
 
+    /**
+     * Sets the web view to the body of the email. Prioritizes HTML over plain text.
+     *
+     * @param body The body of the email
+     */
     private void setBody(Object body) {
         Pair<String, String> result = BodyParser.parse(body, true);
 
         html = result.getA();
-        if (result.getB().equalsIgnoreCase("text/plain"))
+        if (result.getB().equalsIgnoreCase("text/plain")) // Fix new lines if we're displaying plain text
             html = html.replaceAll("\n", "<br>");
 
         webView.getEngine().loadContent(html);
@@ -125,6 +131,9 @@ public class EmailView implements SofView {
         AuthorView.show(message, AuthorMode.REPLY_ALL);
     }
 
+    /**
+     * Downloads the attachments of the email and opens the directory where they are saved.
+     */
     @FXML
     public void actionDownloadAttachments() {
         Preferences prefs = Preferences.userNodeForPackage(EmailView.class);
@@ -135,24 +144,24 @@ public class EmailView implements SofView {
         directoryChooser.setTitle("Select directory to save attachments");
         File window = directoryChooser.showDialog(rootPane.getScene().getWindow());
 
-        if (window == null) return;
+        if (window == null) return; // return if the user cancels the dialog
 
         String path = window.getAbsolutePath();
         prefs.put("lastPath", path);
 
         DownloadAttachmentsTask task = new DownloadAttachmentsTask(content, path, BodyParser.getHashCode(message));
         task.onSucceededProperty().set(event -> {
-            Map<String, String> attachments = task.getValue();
             if (task.getValue() == null)
                 return;
 
+            // open the folder in explorer when the attachments are downloaded
             try {
                 Runtime.getRuntime().exec("explorer.exe /open," + path);
             } catch (IOException e) {
                 System.out.println("Failed to open directory: " + e.getMessage());
             }
 
-            displayAttachments();
+            displayAttachments(); // they're now downloaded and can be displayed
         });
 
         new Thread(task).start();
@@ -178,6 +187,11 @@ public class EmailView implements SofView {
         circle.setStyle("-fx-fill: " + colors[index]);
     }
 
+    /**
+     * Forces the client to display an email view with the specified message
+     *
+     * @param message The message to display
+     */
     public static void show(Message message) {
         ClientView.setCenter(new EmailView(message).getView());
     }
@@ -205,7 +219,7 @@ public class EmailView implements SofView {
     }
 
     /**
-     * Replaces attachment CIDs with a local path to the attachment.
+     * Replaces attachment CIDs with a local path to the attachment, letting them be displayed.
      * For this to work the attachments need to be saved to a temporary directory beforehand.
      */
     private void displayAttachments() {
