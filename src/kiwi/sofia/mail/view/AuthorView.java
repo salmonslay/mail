@@ -2,10 +2,6 @@ package kiwi.sofia.mail.view;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeBodyPart;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimeMultipart;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
@@ -17,7 +13,6 @@ import javafx.scene.web.HTMLEditor;
 import javafx.stage.FileChooser;
 import kiwi.sofia.mail.common.*;
 import kiwi.sofia.mail.task.SendEmailTask;
-import org.jsoup.Jsoup;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -128,7 +123,7 @@ public class AuthorView implements SofView {
         }
 
         System.out.println("Sending email");
-        setButtons(true);
+        disableButtons(true);
 
         SendEmailTask sendTask = new SendEmailTask(addressField.getText(), subjectField.getText(), messageField.getHtmlText(), files);
 
@@ -139,7 +134,7 @@ public class AuthorView implements SofView {
         });
 
         sendTask.setOnFailed(event -> {
-            setButtons(false);
+            disableButtons(false);
 
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Failed to send email");
@@ -181,7 +176,7 @@ public class AuthorView implements SofView {
      *
      * @param disable True to disable, false to enable
      */
-    private void setButtons(boolean disable) {
+    private void disableButtons(boolean disable) {
         sendButton.setDisable(disable);
         attachButton.setDisable(disable);
         addressField.setDisable(disable);
