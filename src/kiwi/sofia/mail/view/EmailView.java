@@ -93,11 +93,9 @@ public class EmailView implements SofView {
     private void setBody(Object body) {
         Pair<String, String> result = BodyParser.parse(body, true);
 
-        if (result.getB().equalsIgnoreCase("text/plain")) {
-            html = result.getA().replaceAll("\n", "<br>");
-        } else {
-            html = result.getA();
-        }
+        html = result.getA();
+        if (result.getB().equalsIgnoreCase("text/plain"))
+            html = html.replaceAll("\n", "<br>");
 
         webView.getEngine().loadContent(html);
     }
