@@ -67,7 +67,7 @@ public class EmailView implements SofView {
             attachmentsButton.setDisable(BodyParser.attachmentCount(message) == 0);
             replyAllButton.setDisable(message.getAllRecipients() != null && message.getAllRecipients().length < 2);
 
-            String regex = "(.+) (<.+>)";
+            String regex = "\"?(.+?)\"? (<.+>)"; // Matches "Name" <email>, without quotes including angle brackets
             String from = message.getFrom()[0].toString();
             senderLabel.setText(from.replaceAll(regex, "$1"));
             emailLabel.setText(from.replaceAll(regex, "$2"));
