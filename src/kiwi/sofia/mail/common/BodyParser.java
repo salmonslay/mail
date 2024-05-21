@@ -126,6 +126,7 @@ public class BodyParser {
                         }
                     }
 
+                    // fallback if no cid is available
                     saveFile(part, part.getFileName(), path, messageHashCode, "no-cid" + i);
                 }
             }
