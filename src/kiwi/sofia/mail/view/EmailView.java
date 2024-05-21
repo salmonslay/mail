@@ -118,22 +118,22 @@ public class EmailView implements SofView {
     }
 
     @FXML
-    public void actionGoBackToInbox() {
+    private void actionGoBackToInbox() {
         ClientView.showInbox();
     }
 
     @FXML
-    public void actionReply() {
+    private void actionReply() {
         AuthorView.show(message, AuthorMode.REPLY);
     }
 
     @FXML
-    public void actionForward() {
+    private void actionForward() {
         AuthorView.show(message, AuthorMode.FORWARD);
     }
 
     @FXML
-    public void actionReplyAll() {
+    private void actionReplyAll() {
         AuthorView.show(message, AuthorMode.REPLY_ALL);
     }
 
@@ -141,7 +141,7 @@ public class EmailView implements SofView {
      * Downloads the attachments of the email and opens the directory where they are saved.
      */
     @FXML
-    public void actionDownloadAttachments() {
+    private void actionDownloadAttachments() {
         Preferences prefs = Preferences.userNodeForPackage(EmailView.class);
         String lastPath = prefs.get("lastPath", System.getProperty("user.home"));
 
