@@ -7,14 +7,15 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import org.kordamp.ikonli.javafx.StackedFontIcon?>
 
-<BorderPane fx:id="rootPane" minWidth="500.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="rootPane" minHeight="600.0" minWidth="500.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <StackPane fx:id="stackPane">
          <children>
-            <ListView fx:id="listView" prefHeight="200.0" prefWidth="200.0" />
+            <ListView fx:id="listView" />
             <Label fx:id="statusLabel" text="Label" />
          </children>
       </StackPane>
@@ -82,4 +83,34 @@
          </bottom>
       </BorderPane>
    </bottom>
+   <left>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <top>
+            <Button mnemonicParsing="false" text="Compose" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="36.0" top="36.0" />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="12.0" left="24.0" right="24.0" top="12.0" />
+               </padding>
+               <graphic>
+                  <StackedFontIcon>
+                     <children>
+                        <FontIcon iconLiteral="fa-pencil" iconSize="24" />
+                     </children>
+                     <padding>
+                        <Insets right="8.0" />
+                     </padding>
+                  </StackedFontIcon>
+               </graphic>
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+         </top>
+         <center>
+            <ListView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+         </center>
+      </BorderPane>
+   </left>
 </BorderPane>
