@@ -142,7 +142,9 @@ public class AuthorView implements SofView {
                     message.setSubject(subjectField.getText());
 
                     BodyPart htmlBody = new MimeBodyPart();
-                    htmlBody.setContent(messageField.getHtmlText(), "text/html");
+                    String html = messageField.getHtmlText();
+                    html = html.replaceAll("contenteditable=\"true\"", ""); // remove contenteditable attribute
+                    htmlBody.setContent(html, "text/html");
 
                     BodyPart plainBody = new MimeBodyPart();
                     plainBody.setContent(Jsoup.parse(messageField.getHtmlText()).wholeText(), "text/plain");
