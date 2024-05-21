@@ -4,10 +4,7 @@ import jakarta.mail.Folder;
 import javafx.concurrent.Task;
 import kiwi.sofia.mail.common.ImapManager;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * A task that fetches the user's folders.
@@ -21,7 +18,7 @@ public class GetFoldersTask extends Task<ArrayList<Folder>> {
             throw new RuntimeException("Error fetching folders"); // will be caught by javafx
         }
 
-        // [Gmail]-folders first
+        // [Gmail]-folders first, minus the [Gmail] folder itself
         ArrayList<Folder> foldersList = new ArrayList<>();
         for (Folder folder : folders) {
             String name = folder.getFullName();
@@ -29,10 +26,9 @@ public class GetFoldersTask extends Task<ArrayList<Folder>> {
                 continue;
 
             foldersList.add(folder);
-            System.out.println("Added folder: " + name);
         }
 
-        // Add the non-Gmail folders to the end of the list
+        // Add the remaining non-Gmail folders
         for (Folder folder : folders) {
             String name = folder.getFullName();
             if (name.contains("[Gmail]"))
@@ -43,7 +39,6 @@ public class GetFoldersTask extends Task<ArrayList<Folder>> {
             else
                 foldersList.add(folder);
         }
-
 
         return foldersList;
     }
