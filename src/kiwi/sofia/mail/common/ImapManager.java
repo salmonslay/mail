@@ -2,26 +2,27 @@ package kiwi.sofia.mail.common;
 
 import jakarta.mail.*;
 
+import java.util.HashMap;
 import java.util.Properties;
 
 public class ImapManager {
-    private static Folder inbox;
+    private static final HashMap<String, Folder> folders = new HashMap<>();
 
     /**
      * Gets the user's inbox folder through IMAP. Blocking.
      *
      * @return a pair of the inbox folder and an exception if an error occurred
      */
-    public static Pair<Folder, Exception> getInboxExc() {
+    public static Pair<Folder, Exception> getFolderExc(String folderName) {
         System.out.println("Getting inbox");
 
         try {
             Store store = getStoreExc().getA();
+            Folder folder = store.getFolder(folderName);
 
-            Folder inbox = store.getFolder("INBOX");
-            inbox.open(Folder.READ_ONLY);
-            ImapManager.inbox = inbox;
-            return new Pair<>(inbox, null);
+            folder.open(Folder.READ_ONLY);
+            ImapManager.folders.put(folderName, folder);
+            return new Pair<>(folder, null);
         } catch (MessagingException e) {
             return new Pair<>(null, e);
         }
@@ -51,8 +52,8 @@ public class ImapManager {
      *
      * @return the user's inbox folder through IMAP
      */
-    public static Folder getInbox() {
-        return getInboxExc().getA();
+    public static Folder getFolder(String folderName) {
+        return getFolderExc(folderName).getA();
     }
 
     /**
@@ -60,11 +61,11 @@ public class ImapManager {
      *
      * @return a cached version of the user's inbox folder, or a new one if it hasn't been cached yet
      */
-    public static Folder getCachedInbox() {
-        if (inbox == null) {
-            System.out.println("Re-fetching non-cached inbox");
-            inbox = getInbox();
+    public static Folder getCachedInbox(String folderName) {
+        if (!folders.containsKey(folderName)) {
+            System.out.printf("Re-fetching non-cached folder %s", folderName);
+            folders.put(folderName, getFolder(folderName));
         }
-        return inbox;
+        return folders.get(folderName);
     }
 }

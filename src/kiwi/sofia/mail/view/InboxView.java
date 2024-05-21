@@ -178,7 +178,7 @@ public class InboxView implements SofView {
         fetchProfile.add(FetchProfile.Item.ENVELOPE);
 
         try {
-            ImapManager.getCachedInbox().fetch(messages, fetchProfile);
+            ImapManager.getCachedInbox("INBOX").fetch(messages, fetchProfile);
             messageObservableList.addAll(messages);
         } catch (MessagingException e) {
             System.out.println("Failed to fetch messages: " + e.getMessage());
