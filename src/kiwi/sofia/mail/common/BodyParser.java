@@ -125,6 +125,8 @@ public class BodyParser {
                             break;
                         }
                     }
+
+                    saveFile(part, part.getFileName(), path, messageHashCode, "no-cid" + i);
                 }
             }
             return attachments;
