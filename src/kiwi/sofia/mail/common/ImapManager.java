@@ -63,7 +63,7 @@ public class ImapManager {
      */
     public static Folder getCachedInbox(String folderName) {
         if (!folders.containsKey(folderName)) {
-            System.out.printf("Re-fetching non-cached folder %s", folderName);
+            System.out.printf("Re-fetching non-cached folder %s\n", folderName);
             folders.put(folderName, getFolder(folderName));
         }
         return folders.get(folderName);
