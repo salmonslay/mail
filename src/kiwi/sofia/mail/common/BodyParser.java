@@ -22,11 +22,11 @@ public class BodyParser {
      *
      * @param body    The body of the email.
      * @param getHtml Whether to return the body as HTML or plain text.
-     * @return The body of the email.
+     * @return The body of the email and its content type.
      */
-    public static String parse(Object body, boolean getHtml) {
+    public static Pair<String, String> parse(Object body, boolean getHtml) {
         if (body instanceof String) {
-            return (String) body;
+            return new Pair<>((String) body, "text/plain");
         } else if (body instanceof Multipart) {
             StringBuilder plainText = new StringBuilder();
             StringBuilder html = new StringBuilder();
@@ -52,10 +52,10 @@ public class BodyParser {
 
                 if (!html.isEmpty() && getHtml) {
                     System.out.println("Returning requested and found HTML body");
-                    return html.toString();
+                    return new Pair<>(html.toString(), "text/html");
                 } else if (!plainText.isEmpty()) {
                     System.out.printf("Returning plain text body, requested? %b\n", getHtml);
-                    return plainText.toString();
+                    return new Pair<>(plainText.toString(), "text/plain");
                 } else {
                     System.out.println("No body found");
 
@@ -76,13 +76,13 @@ public class BodyParser {
      * @param header The header of the error message.
      * @param body   The body of the error message.
      * @param html   Whether to return the error message as HTML or plain text.
-     * @return The error message.
+     * @return The error message and its content type.
      */
-    private static String createError(String header, String body, boolean html) {
+    private static Pair<String, String> createError(String header, String body, boolean html) {
         if (html)
-            return "<h1>" + header + "</h1>" + body;
+            return new Pair<>("<h1>" + header + "</h1>" + body, "text/html");
         else
-            return header + "\n" + body;
+            return new Pair<>(header + "\n" + body, "text/plain");
     }
 
     /**
@@ -175,11 +175,11 @@ public class BodyParser {
     }
 
     public static String extractPlainText(Object body) {
-        return parse(body, false);
+        return parse(body, false).getA();
     }
 
     public static String extractHtml(Object body) {
-        return parse(body, true);
+        return parse(body, true).getA();
     }
 
     private static int attachmentCount(Object body, int startFrom) {
