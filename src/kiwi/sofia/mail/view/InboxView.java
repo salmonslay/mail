@@ -1,11 +1,9 @@
 package kiwi.sofia.mail.view;
 
-import com.sun.javafx.collections.ArrayListenerHelper;
 import jakarta.mail.FetchProfile;
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -59,6 +57,7 @@ public class InboxView implements SofView {
     @FXML
     private Button buttonReload;
     private boolean refreshing = false;
+    private String folderName = "INBOX";
 
     private InboxView() {
         try {
@@ -73,27 +72,37 @@ public class InboxView implements SofView {
             folderListView.setCellFactory(param -> new FolderCell());
 
             folderStatusLabel.setText("");
-
-            startRefreshThread();
         } catch (Exception e) {
             System.out.println("Failed to load InboxView.fxml" + e.getMessage());
         }
     }
 
+    public static void showFolder(Folder folder) {
+        InboxView inboxView = getInstance();
+        inboxView.fetchEmails(folder.getFullName());
+    }
+
+    @FXML
+    public void fetchEmails() {
+        fetchEmails(folderName);
+    }
+
     /**
      * Fetches emails from the user's inbox and updates the view with the emails.
      */
-    @FXML
-    public void fetchEmails() {
+    public void fetchEmails(String folder) {
+        this.folderName = folder;
+
         buttonLeft.setDisable(true);
         pageLabel.setText("...");
         buttonReload.setDisable(true);
 
-        FetchEmailsTask fetchEmailsTask = new FetchEmailsTask();
+        FetchEmailsTask fetchEmailsTask = new FetchEmailsTask(folder);
 
         emailStatusLabel.textProperty().bind(fetchEmailsTask.messageProperty());
 
         fetchEmailsTask.setOnSucceeded(event -> {
+            messageObservableList.clear();
             emailStatusLabel.textProperty().unbind();
             emailStatusLabel.setText("");
 
@@ -152,7 +161,7 @@ public class InboxView implements SofView {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        fetchEmails();
+        fetchEmails("INBOX");
         fetchFolders();
     }
 
@@ -207,6 +216,8 @@ public class InboxView implements SofView {
      * Refreshes the page with emails from the current page number.
      */
     private void refreshPage() {
+        System.out.println("Refreshing page " + currentPage);
+
         messageObservableList.clear();
         int firstIndex = currentPage * 50;
         int lastIndex = Math.min((currentPage + 1) * 50, messages.length);
@@ -216,8 +227,10 @@ public class InboxView implements SofView {
         fetchProfile.add(FetchProfile.Item.ENVELOPE);
 
         try {
-            ImapManager.getCachedInbox("INBOX").fetch(messages, fetchProfile);
+            ImapManager.getCachedInbox(folderName).fetch(messages, fetchProfile);
             messageObservableList.addAll(messages);
+
+            System.out.printf("Fetched %d messages\n", messages.length);
         } catch (MessagingException e) {
             System.out.println("Failed to fetch messages: " + e.getMessage());
         }
@@ -229,27 +242,6 @@ public class InboxView implements SofView {
      * Updates the page label with the current email range in the format "51 - 100 of 1323"
      */
     private void updatePageLabel() {
-        pageLabel.setText(MessageFormat.format("{0} - {1} of {2}",
-                currentPage * 50 + 1,
-                Math.min((currentPage + 1) * 50, messages.length),
-                messages.length));
-    }
-
-    private void startRefreshThread() {
-        if (refreshing)
-            return;
-
-        refreshing = true;
-
-        new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(15000);
-                    Platform.runLater(this::fetchEmails);
-                } catch (InterruptedException e) {
-                    System.out.println("Failed to sleep: " + e.getMessage());
-                }
-            }
-        }).start();
+        pageLabel.setText(MessageFormat.format("{0} - {1} of {2}", currentPage * 50 + 1, Math.min((currentPage + 1) * 50, messages.length), messages.length));
     }
 }

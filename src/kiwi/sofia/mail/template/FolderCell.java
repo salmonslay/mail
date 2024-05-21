@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.Pane;
+import kiwi.sofia.mail.view.InboxView;
 import kiwi.sofia.mail.view.SofView;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -71,5 +72,10 @@ public class FolderCell extends ListCell<Folder> implements SofView {
     @Override
     public Pane getView() {
         return rootPane;
+    }
+
+    @FXML
+    protected void actionSetFolder() {
+        InboxView.showFolder(folder);
     }
 }

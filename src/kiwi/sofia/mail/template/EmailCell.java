@@ -37,7 +37,10 @@ public class EmailCell extends ListCell<Message> {
     protected void updateItem(Message message, boolean empty) {
         super.updateItem(message, empty);
 
-        if (empty) return;
+        if (empty) {
+            setGraphic(null);
+            return;
+        }
 
         if (loader == null) {
             loader = new FXMLLoader(getClass().getResource("/fxml/EmailCell.fxml"));
