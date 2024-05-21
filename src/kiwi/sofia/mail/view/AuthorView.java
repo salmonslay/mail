@@ -130,7 +130,7 @@ public class AuthorView implements SofView {
         System.out.println("Sending email");
         setButtons(true);
 
-        Task<MimeMessage> sendTask = new SendEmailTask(addressField.getText(), subjectField.getText(), messageField.getHtmlText(), files);
+        SendEmailTask sendTask = new SendEmailTask(addressField.getText(), subjectField.getText(), messageField.getHtmlText(), files);
 
         filesAttachedLabel.textProperty().bind(sendTask.messageProperty());
 
