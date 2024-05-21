@@ -15,6 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import kiwi.sofia.mail.common.ImapManager;
 import kiwi.sofia.mail.task.FetchEmailsTask;
+import kiwi.sofia.mail.task.GetFoldersTask;
 import kiwi.sofia.mail.template.EmailCell;
 import kiwi.sofia.mail.template.FolderCell;
 
@@ -39,7 +40,9 @@ public class InboxView implements SofView {
     @FXML
     private Pane rootPane;
     @FXML
-    private Label statusLabel;
+    private Label emailStatusLabel;
+    @FXML
+    private Label folderStatusLabel;
     @FXML
     private Button buttonRight;
     @FXML
@@ -66,6 +69,8 @@ public class InboxView implements SofView {
             folderListView.setItems(folderObservableList);
             folderListView.setCellFactory(param -> new FolderCell());
 
+            folderStatusLabel.setText("");
+
             startRefreshThread();
         } catch (Exception e) {
             System.out.println("Failed to load InboxView.fxml" + e.getMessage());
@@ -83,11 +88,11 @@ public class InboxView implements SofView {
 
         FetchEmailsTask fetchEmailsTask = new FetchEmailsTask();
 
-        statusLabel.textProperty().bind(fetchEmailsTask.messageProperty());
+        emailStatusLabel.textProperty().bind(fetchEmailsTask.messageProperty());
 
         fetchEmailsTask.setOnSucceeded(event -> {
-            statusLabel.textProperty().unbind();
-            statusLabel.setText("");
+            emailStatusLabel.textProperty().unbind();
+            emailStatusLabel.setText("");
 
             Message[] messages = fetchEmailsTask.getValue();
             Message[] reversedMessages = new Message[messages.length];
@@ -103,8 +108,8 @@ public class InboxView implements SofView {
         });
 
         fetchEmailsTask.setOnFailed(event -> {
-            statusLabel.textProperty().unbind();
-            statusLabel.setText("Failed to fetch emails.\n" + fetchEmailsTask.getException().getMessage());
+            emailStatusLabel.textProperty().unbind();
+            emailStatusLabel.setText("Failed to fetch emails.\n" + fetchEmailsTask.getException().getMessage());
             System.out.println("Failed to fetch emails: " + fetchEmailsTask.getException().getMessage());
 
             buttonReload.setDisable(false);
@@ -115,6 +120,26 @@ public class InboxView implements SofView {
         executorService.shutdown();
     }
 
+    private void fetchFolders() {
+        GetFoldersTask task = new GetFoldersTask();
+
+        folderStatusLabel.setText("Fetching folders...");
+
+        task.setOnSucceeded(event -> {
+            folderObservableList.clear();
+            folderObservableList.addAll(task.getValue());
+
+            folderStatusLabel.setText("");
+        });
+
+        task.setOnFailed(event -> {
+            System.out.println("Failed to fetch folders: " + task.getException().getMessage());
+            folderStatusLabel.setText("Failed to fetch folders.");
+        });
+
+        new Thread(task).start();
+    }
+
     @Override
     public Pane getView() {
         return rootPane;
@@ -123,6 +148,7 @@ public class InboxView implements SofView {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         fetchEmails();
+        fetchFolders();
     }
 
     public static InboxView getInstance() {
