@@ -264,8 +264,7 @@ public class AuthorView implements SofView {
 
             StringBuilder addressList = new StringBuilder();
             for (Address address : addresses) {
-                addressList.append(address.toString().replaceAll(".+ <(.+)>", "$1"));
-                addressList.append(", ");
+                addressList.append(address).append(", ");
             }
 
             addressList.delete(addressList.length() - 2, addressList.length()); // remove the last comma and space
