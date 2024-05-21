@@ -9,6 +9,12 @@ import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
 import kiwi.sofia.mail.view.ClientView;
 import kiwi.sofia.mail.view.EmailView;
+import org.apache.commons.lang3.time.DateUtils;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * A clickable cell in the email list. Opens the email when clicked.
@@ -47,7 +53,11 @@ public class EmailCell extends ListCell<Message> {
             subjectLabel.setText(message.getSubject());
             fromLabel.setText(message.getFrom()[0].toString());
 
-            dateLabel.setText(message.getSentDate().toString());
+            Date date = message.getSentDate();
+            Locale locale = new Locale("en", "US");
+            String pattern = DateUtils.isSameDay(new Date(), date) ? "K:mm a" : "MMM d"; // 9:30 AM or Mar 15
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, locale);
+            dateLabel.setText(simpleDateFormat.format(date));
 
             setGraphic(gridPane);
             setText(null);

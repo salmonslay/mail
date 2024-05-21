@@ -19,6 +19,8 @@ import kiwi.sofia.mail.task.DownloadAttachmentsTask;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Map;
 import java.util.prefs.Preferences;
 
@@ -75,7 +77,11 @@ public class EmailView implements SofView {
             String from = message.getFrom()[0].toString();
             senderLabel.setText(from.replaceAll(regex, "$1")); // name (without surrounding quotes)
             emailLabel.setText(from.replaceAll(regex, "$2")); // <email>
-            dateLabel.setText(message.getSentDate().toString());
+
+            Locale locale = new Locale("en", "US");
+            String pattern = "MMM d, yyyy 'at' K:mm a"; // Mar 15, 2021 at 9:30 AM
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, locale);
+            dateLabel.setText(simpleDateFormat.format(message.getSentDate()));
 
             setCircle(from);
 
