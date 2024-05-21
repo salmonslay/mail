@@ -14,6 +14,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import kiwi.sofia.mail.common.AuthorMode;
 import kiwi.sofia.mail.common.BodyParser;
+import kiwi.sofia.mail.common.Pair;
 import kiwi.sofia.mail.task.DownloadAttachmentsTask;
 
 import java.io.File;
@@ -90,7 +91,14 @@ public class EmailView implements SofView {
     }
 
     private void setBody(Object body) {
-        html = BodyParser.extractHtml(body);
+        Pair<String, String> result = BodyParser.parse(body, true);
+
+        if (result.getB().equalsIgnoreCase("text/plain")) {
+            html = result.getA().replaceAll("\n", "<br>");
+        } else {
+            html = result.getA();
+        }
+
         webView.getEngine().loadContent(html);
     }
 
