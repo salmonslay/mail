@@ -248,4 +248,9 @@ public class InboxView implements SofView {
     public String getFolderName() {
         return folderName;
     }
+
+    @FXML
+    private void actionCompose(){
+        AuthorView.show();
+    }
 }

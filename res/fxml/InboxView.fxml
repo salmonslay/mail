@@ -86,7 +86,7 @@
    <left>
       <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <top>
-            <Button mnemonicParsing="false" text="Compose" BorderPane.alignment="CENTER">
+            <Button mnemonicParsing="false" onAction="#actionCompose" text="Compose" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets bottom="36.0" top="36.0" />
                </BorderPane.margin>
