@@ -16,6 +16,7 @@ import javafx.scene.layout.StackPane;
 import kiwi.sofia.mail.common.ImapManager;
 import kiwi.sofia.mail.task.FetchEmailsTask;
 import kiwi.sofia.mail.template.EmailCell;
+import kiwi.sofia.mail.template.FolderCell;
 
 import java.net.URL;
 import java.text.MessageFormat;
@@ -30,7 +31,9 @@ import java.util.concurrent.Executors;
 public class InboxView implements SofView {
     private static InboxView instance;
     @FXML
-    private ListView<Message> listView;
+    private ListView<Message> emailListView;
+    @FXML
+    private ListView<String> folderListView;
     @FXML
     private StackPane stackPane;
     @FXML
@@ -43,7 +46,8 @@ public class InboxView implements SofView {
     private Button buttonLeft;
     @FXML
     private Label pageLabel;
-    private ObservableList<Message> messageObservableList = FXCollections.observableArrayList();
+    private final ObservableList<Message> messageObservableList = FXCollections.observableArrayList();
+    private final ObservableList<String> folderObservableList = FXCollections.observableArrayList();
     private Message[] messages;
     private int currentPage = 0;
     @FXML
@@ -56,8 +60,11 @@ public class InboxView implements SofView {
             loader.setController(this);
             loader.load();
 
-            listView.setItems(messageObservableList);
-            listView.setCellFactory(param -> new EmailCell());
+            emailListView.setItems(messageObservableList);
+            emailListView.setCellFactory(param -> new EmailCell());
+
+            folderListView.setItems(folderObservableList);
+            folderListView.setCellFactory(param -> new FolderCell());
 
             startRefreshThread();
         } catch (Exception e) {
@@ -162,7 +169,7 @@ public class InboxView implements SofView {
         buttonLeft.setDisable(false);
 
         refreshPage();
-        listView.scrollTo(0);
+        emailListView.scrollTo(0);
     }
 
     /**

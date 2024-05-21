@@ -15,7 +15,7 @@
    <center>
       <StackPane fx:id="stackPane">
          <children>
-            <ListView fx:id="listView" />
+            <ListView fx:id="emailListView" />
             <Label fx:id="statusLabel" text="Label" />
          </children>
       </StackPane>
@@ -109,7 +109,7 @@
             </Button>
          </top>
          <center>
-            <ListView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            <ListView fx:id="folderListView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
    </left>

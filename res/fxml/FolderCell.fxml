@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.FlowPane?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import org.kordamp.ikonli.javafx.StackedFontIcon?>
+
+
+<FlowPane fx:id="rootPane" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="24.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <StackedFontIcon iconSize="20">
+         <children>
+            <FontIcon fx:id="icon" iconLiteral="fa-pencil" />
+         </children>
+         <FlowPane.margin>
+            <Insets left="8.0" right="8.0" />
+         </FlowPane.margin>
+      </StackedFontIcon>
+      <Label fx:id="folderLabel" text="Label" />
+   </children>
+</FlowPane>
