@@ -1,6 +1,8 @@
 package kiwi.sofia.mail.view;
 
+import com.sun.javafx.collections.ArrayListenerHelper;
 import jakarta.mail.FetchProfile;
+import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import javafx.application.Platform;
@@ -21,6 +23,7 @@ import kiwi.sofia.mail.template.FolderCell;
 
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +37,7 @@ public class InboxView implements SofView {
     @FXML
     private ListView<Message> emailListView;
     @FXML
-    private ListView<String> folderListView;
+    private ListView<Folder> folderListView;
     @FXML
     private StackPane stackPane;
     @FXML
@@ -50,7 +53,7 @@ public class InboxView implements SofView {
     @FXML
     private Label pageLabel;
     private final ObservableList<Message> messageObservableList = FXCollections.observableArrayList();
-    private final ObservableList<String> folderObservableList = FXCollections.observableArrayList();
+    private final ObservableList<Folder> folderObservableList = FXCollections.observableArrayList();
     private Message[] messages;
     private int currentPage = 0;
     @FXML
@@ -127,7 +130,9 @@ public class InboxView implements SofView {
 
         task.setOnSucceeded(event -> {
             folderObservableList.clear();
-            folderObservableList.addAll(task.getValue());
+            ArrayList<Folder> folders = task.getValue();
+
+            folderObservableList.addAll(folders);
 
             folderStatusLabel.setText("");
         });

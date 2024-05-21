@@ -2,21 +2,31 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import org.kordamp.ikonli.javafx.StackedFontIcon?>
 
 
-<FlowPane fx:id="rootPane" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="24.0" prefWidth="180.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane fx:id="rootPane" prefHeight="24.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="24.0" />
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+   </rowConstraints>
    <children>
-      <StackedFontIcon iconSize="20">
+      <StackedFontIcon iconSize="18">
          <children>
-            <FontIcon fx:id="icon" iconLiteral="fa-pencil" />
+            <FontIcon fx:id="icon" iconLiteral="fa-bookmark" iconSize="18" />
          </children>
-         <FlowPane.margin>
-            <Insets left="8.0" right="8.0" />
-         </FlowPane.margin>
       </StackedFontIcon>
-      <Label fx:id="folderLabel" text="Label" />
+      <Label fx:id="folderLabel" text="Label" GridPane.columnIndex="1">
+         <GridPane.margin>
+            <Insets left="4.0" />
+         </GridPane.margin>
+      </Label>
    </children>
-</FlowPane>
+</GridPane>

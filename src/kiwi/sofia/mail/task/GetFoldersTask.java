@@ -6,26 +6,45 @@ import kiwi.sofia.mail.common.ImapManager;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * A task that fetches the user's folders.
  */
-public class GetFoldersTask extends Task<String[]> {
+public class GetFoldersTask extends Task<ArrayList<Folder>> {
     @Override
-    protected String[] call() throws Exception {
+    protected ArrayList<Folder> call() throws Exception {
         Folder[] folders = ImapManager.getFolders();
 
         if (folders == null) {
             throw new RuntimeException("Error fetching folders"); // will be caught by javafx
         }
 
-        ArrayList<String> folderNames = new ArrayList<>();
+        // [Gmail]-folders first
+        ArrayList<Folder> foldersList = new ArrayList<>();
+        for (Folder folder : folders) {
+            String name = folder.getFullName();
+            if (!name.contains("[Gmail]") || name.equalsIgnoreCase("[Gmail]"))
+                continue;
 
-        for (Folder f : folders) {
-            folderNames.add(f.getFullName());
-            System.out.println(f.getFullName());
+            foldersList.add(folder);
+            System.out.println("Added folder: " + name);
         }
 
-        return folderNames.toArray(new String[0]);
+        // Add the non-Gmail folders to the end of the list
+        for (Folder folder : folders) {
+            String name = folder.getFullName();
+            if (name.contains("[Gmail]"))
+                continue;
+
+            if (name.equals("INBOX"))
+                foldersList.add(0, folder);
+            else
+                foldersList.add(folder);
+        }
+
+
+        return foldersList;
     }
 }
