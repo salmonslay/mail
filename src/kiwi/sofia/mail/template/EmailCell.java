@@ -6,6 +6,7 @@ import jakarta.mail.MessagingException;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.Pane;
@@ -135,6 +136,8 @@ public class EmailCell extends ListCell<Message> {
 
     @FXML
     private void actionStar() {
+        // Filled & gold star for starred, otherwise empty & black
+        // We set it before we actually star the email to give immediate feedback
         boolean isStarred = starIcon.getIconLiteral().equals("fa-star");
         starIcon.setIconLiteral(isStarred ? "fa-star-o" : "fa-star");
         starIcon.setIconColor(isStarred ? Paint.valueOf("#000000") : starIconPaint);
@@ -147,6 +150,15 @@ public class EmailCell extends ListCell<Message> {
                 return null;
             }
         };
+
+        // Display an error if starring failed
+        starTask.setOnFailed(e -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Failed to star email");
+            alert.setHeaderText(null);
+            alert.setContentText(starTask.getException().getMessage());
+            alert.showAndWait();
+        });
 
         new Thread(starTask).start();
     }
