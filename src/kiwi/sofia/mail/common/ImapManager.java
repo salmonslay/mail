@@ -20,7 +20,7 @@ public class ImapManager {
             Store store = getStoreExc().getA();
             Folder folder = store.getFolder(folderName);
 
-            folder.open(Folder.READ_ONLY);
+            folder.open(Folder.READ_WRITE);
             ImapManager.folders.put(folderName, folder);
             return new Pair<>(folder, null);
         } catch (MessagingException e) {
