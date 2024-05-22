@@ -83,7 +83,7 @@
                         <Insets left="10.0" right="10.0" />
                      </BorderPane.margin>
                      <children>
-                        <Button fx:id="sendButton" layoutX="15.0" layoutY="14.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#actionSend" text="Send">
+                        <Button fx:id="sendButton" focusTraversable="false" layoutX="15.0" layoutY="14.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#actionSend" text="Send">
                            <graphic>
                               <StackedFontIcon>
                                  <children>
@@ -95,7 +95,7 @@
                               <Insets left="5.0" right="5.0" />
                            </HBox.margin>
                         </Button>
-                        <Button fx:id="attachButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#actionAttachFiles" text="Attach file(s)">
+                        <Button fx:id="attachButton" focusTraversable="false" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#actionAttachFiles" text="Attach file(s)">
                            <graphic>
                               <StackedFontIcon>
                                  <children>
@@ -119,7 +119,7 @@
                   </HBox>
                </right>
                <left>
-                  <Button mnemonicParsing="false" onAction="#actionBackToInbox" text="Cancel" BorderPane.alignment="CENTER">
+                  <Button focusTraversable="false" mnemonicParsing="false" onAction="#actionBackToInbox" text="Cancel" BorderPane.alignment="CENTER">
                      <graphic>
                         <StackedFontIcon>
                            <children>

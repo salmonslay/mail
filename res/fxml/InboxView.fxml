@@ -29,7 +29,7 @@
                      <children>
                         <FlowPane alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT">
                            <children>
-                              <Button fx:id="buttonLeft" mnemonicParsing="false" onAction="#changePageLeft">
+                              <Button fx:id="buttonLeft" focusTraversable="false" mnemonicParsing="false" onAction="#changePageLeft">
                                  <graphic>
                                     <StackedFontIcon>
                                        <children>
@@ -41,7 +41,7 @@
                                     <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                  </FlowPane.margin>
                               </Button>
-                              <Button fx:id="buttonRight" mnemonicParsing="false" onAction="#changePageRight">
+                              <Button fx:id="buttonRight" focusTraversable="false" mnemonicParsing="false" onAction="#changePageRight">
                                  <graphic>
                                     <StackedFontIcon>
                                        <children>
@@ -64,7 +64,7 @@
                <left>
                   <FlowPane alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="buttonReload" mnemonicParsing="false" onAction="#fetchEmails" text="Reload">
+                        <Button fx:id="buttonReload" focusTraversable="false" mnemonicParsing="false" onAction="#fetchEmails" text="Reload">
                            <graphic>
                               <StackedFontIcon>
                                  <children>
@@ -86,7 +86,7 @@
    <left>
       <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <top>
-            <Button mnemonicParsing="false" onAction="#actionCompose" text="Compose" BorderPane.alignment="CENTER">
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#actionCompose" text="Compose" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets bottom="36.0" top="36.0" />
                </BorderPane.margin>
@@ -111,7 +111,7 @@
          <center>
             <StackPane BorderPane.alignment="CENTER">
                <children>
-                  <ListView fx:id="folderListView" prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="folderListView" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" />
                   <Label fx:id="folderStatusLabel" text="Label" />
                </children>
             </StackPane>
