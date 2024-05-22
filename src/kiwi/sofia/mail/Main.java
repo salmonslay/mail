@@ -2,6 +2,7 @@ package kiwi.sofia.mail;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import kiwi.sofia.mail.view.ClientView;
@@ -30,7 +31,8 @@ public class Main extends Application {
         SofView view = skipLogin ? ClientView.getInstance() : new LoginView();
         Pane root = view.getView();
         Scene scene = new Scene(root, 1280, 720);
-        stage.setTitle("Mail");
+        stage.setTitle("SofMail");
+        stage.getIcons().add(new Image("/favicon.png"));
         stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
