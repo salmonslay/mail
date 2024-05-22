@@ -40,7 +40,7 @@ public class EmailCell extends ListCell<Message> {
      */
     private Message message;
 
-    private static Font unseenFont;
+    private static Font unreadFont;
 
     @Override
     protected void updateItem(Message message, boolean empty) {
@@ -82,13 +82,13 @@ public class EmailCell extends ListCell<Message> {
 
             Flags flags = message.getFlags();
             if (!flags.contains(Flags.Flag.SEEN)) {
-                if (unseenFont == null) {
+                if (unreadFont == null) {
                     Font oldFont = fromLabel.getFont();
-                    unseenFont = Font.font(oldFont.getFamily(), FontWeight.BOLD, oldFont.getSize()); // keep size, change style
+                    unreadFont = Font.font(oldFont.getFamily(), FontWeight.BOLD, oldFont.getSize()); // keep size, change style
                 }
-                fromLabel.setFont(unseenFont);
-                subjectLabel.setFont(unseenFont);
-                dateLabel.setFont(unseenFont);
+                fromLabel.setFont(unreadFont);
+                subjectLabel.setFont(unreadFont);
+                dateLabel.setFont(unreadFont);
             }
 
             setGraphic(rootPane);
