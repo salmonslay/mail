@@ -1,6 +1,7 @@
 package kiwi.sofia.mail.template;
 
 import jakarta.mail.Flags;
+import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import javafx.concurrent.Task;
@@ -14,6 +15,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import kiwi.sofia.mail.common.AuthorMode;
+import kiwi.sofia.mail.common.ImapManager;
 import kiwi.sofia.mail.view.AuthorView;
 import kiwi.sofia.mail.view.EmailView;
 import kiwi.sofia.mail.view.InboxView;
@@ -129,9 +131,56 @@ public class EmailCell extends ListCell<Message> {
         }
     }
 
+    /**
+     * Asks the user if they want to delete this message.
+     */
     @FXML
-    private void actionDelete() {
-        System.out.println("deleting");
+    private void actionDelete() throws MessagingException {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete email");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to delete the email \"" + message.getSubject() + "\"?");
+        alert.showAndWait();
+
+        if (alert.getResult().getButtonData().isCancelButton()) {
+            return;
+        }
+
+        Task<Void> deleteTask = new Task<>() {
+            @Override
+            protected Void call() throws MessagingException {
+                message.setFlag(Flags.Flag.DELETED, true);
+
+                // Special case for Gmail: move to trash instead of deleting
+                // https://javaee.github.io/javamail/FAQ
+                Folder trash = ImapManager.getFolder("[Gmail]/Trash");
+                if (trash != null)
+                    message.getFolder().copyMessages(new Message[]{message}, trash);
+
+                System.out.printf("Successfully deleted email with subject: %s\n", message.getSubject());
+                return null;
+            }
+        };
+
+        deleteTask.setOnFailed(e -> {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setTitle("Failed to delete email");
+            errorAlert.setHeaderText(null);
+            errorAlert.setContentText(deleteTask.getException().getMessage());
+            errorAlert.showAndWait();
+        });
+
+        deleteTask.setOnSucceeded(e -> {
+            InboxView.getInstance().fetchEmails();
+
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+            successAlert.setTitle("Email deleted");
+            successAlert.setHeaderText(null);
+            successAlert.setContentText("The email has been successfully deleted.");
+            successAlert.showAndWait();
+        });
+
+        new Thread(deleteTask).start();
     }
 
     @FXML
