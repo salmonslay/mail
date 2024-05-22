@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -214,16 +215,15 @@ public class BodyParser {
     }
 
     /**
-     * Gets the hash code of the message content and sent date. Blocking if the content hasn't been loaded yet.
+     * Gets the hash code of the subject, date and recipients. Blocking if the content hasn't been loaded yet.
      *
      * @param msg The message to get the hash code of.
      * @return The hash code of the message content and sent date.
      */
     public static Integer getHashCode(Message msg) {
         try {
-            String str = extractHtml(msg.getContent()) + msg.getSentDate().toString();
-            return str.hashCode();
-        } catch (MessagingException | IOException e) {
+            return (msg.getSubject() + msg.getSentDate() + Arrays.toString(msg.getAllRecipients())).hashCode();
+        } catch (MessagingException e) {
             System.out.println("Failed to get hash code: " + e.getMessage());
             return 0;
         }
