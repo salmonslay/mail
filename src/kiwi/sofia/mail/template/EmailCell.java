@@ -1,5 +1,6 @@
 package kiwi.sofia.mail.template;
 
+import jakarta.mail.Flags;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import javafx.fxml.FXML;
@@ -7,6 +8,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import kiwi.sofia.mail.common.AuthorMode;
 import kiwi.sofia.mail.view.AuthorView;
 import kiwi.sofia.mail.view.EmailView;
@@ -36,6 +39,8 @@ public class EmailCell extends ListCell<Message> {
      * The email message of this cell.
      */
     private Message message;
+
+    private static Font unseenFont;
 
     @Override
     protected void updateItem(Message message, boolean empty) {
@@ -74,6 +79,17 @@ public class EmailCell extends ListCell<Message> {
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, locale);
             dateLabel.setText(simpleDateFormat.format(date));
+
+            Flags flags = message.getFlags();
+            if (!flags.contains(Flags.Flag.SEEN)) {
+                if (unseenFont == null) {
+                    Font oldFont = fromLabel.getFont();
+                    unseenFont = Font.font(oldFont.getFamily(), FontWeight.BOLD, oldFont.getSize()); // keep size, change style
+                }
+                fromLabel.setFont(unseenFont);
+                subjectLabel.setFont(unseenFont);
+                dateLabel.setFont(unseenFont);
+            }
 
             setGraphic(rootPane);
             setText(null);
