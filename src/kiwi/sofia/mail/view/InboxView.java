@@ -54,7 +54,15 @@ public class InboxView implements SofView {
     private int currentPage = 0;
     @FXML
     private Button buttonReload;
-    private boolean refreshing = false;
+
+    /**
+     * Whether we're trying to fetch emails.
+     */
+    private boolean isFetching = false;
+
+    /**
+     * The folder we want to display emails from.
+     */
     private String folderName = "INBOX";
 
     private InboxView() {
@@ -98,6 +106,9 @@ public class InboxView implements SofView {
      * Fetches emails from the user's inbox and updates the view with the emails.
      */
     public void fetchEmails(String folder) {
+        if (isFetching) return;
+        isFetching = true;
+
         this.folderName = folder;
 
         buttonLeft.setDisable(true);
@@ -124,6 +135,7 @@ public class InboxView implements SofView {
             refreshPage();
 
             buttonReload.setDisable(false);
+            isFetching = false;
         });
 
         fetchEmailsTask.setOnFailed(event -> {
@@ -132,6 +144,7 @@ public class InboxView implements SofView {
             System.out.println("Failed to fetch emails: " + fetchEmailsTask.getException().getMessage());
 
             buttonReload.setDisable(false);
+            isFetching = false;
         });
 
         ExecutorService executorService = Executors.newFixedThreadPool(1);
