@@ -126,6 +126,8 @@ public class EmailCell extends ListCell<Message> {
                 AuthorView.show(message, AuthorMode.EDIT);
             else
                 EmailView.show(message);
+
+            InboxView.getInstance().fetchEmails();
         } catch (MessagingException e) {
             System.out.printf("Failed to open %s: %s\n", isDraft ? "draft" : "email", e.getMessage());
         }
