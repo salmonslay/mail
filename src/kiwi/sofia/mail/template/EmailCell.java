@@ -3,11 +3,13 @@ package kiwi.sofia.mail.template;
 import jakarta.mail.Flags;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import kiwi.sofia.mail.common.AuthorMode;
@@ -15,6 +17,7 @@ import kiwi.sofia.mail.view.AuthorView;
 import kiwi.sofia.mail.view.EmailView;
 import kiwi.sofia.mail.view.InboxView;
 import org.apache.commons.lang3.time.DateUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,7 +28,6 @@ import java.util.Locale;
  */
 @SuppressWarnings("deprecation") // getYear, whatever
 public class EmailCell extends ListCell<Message> {
-
     @FXML
     private Label subjectLabel;
     @FXML
@@ -34,6 +36,10 @@ public class EmailCell extends ListCell<Message> {
     private Label dateLabel;
     @FXML
     private Pane rootPane;
+    @FXML
+    private FontIcon deleteIcon;
+    @FXML
+    private FontIcon starIcon;
 
     /**
      * The email message of this cell.
@@ -41,6 +47,7 @@ public class EmailCell extends ListCell<Message> {
     private Message message;
 
     private static Font unreadFont;
+    private static final Paint starIconPaint = Paint.valueOf("#ffbf00"); // gold
 
     @Override
     protected void updateItem(Message message, boolean empty) {
@@ -91,6 +98,11 @@ public class EmailCell extends ListCell<Message> {
                 dateLabel.setFont(unreadFont);
             }
 
+            if (flags.contains(Flags.Flag.FLAGGED)) {
+                starIcon.setIconLiteral("fa-star");
+                starIcon.setIconColor(starIconPaint);
+            }
+
             setGraphic(rootPane);
             setText(null);
         } catch (Exception e) {
@@ -114,5 +126,28 @@ public class EmailCell extends ListCell<Message> {
         } catch (MessagingException e) {
             System.out.printf("Failed to open %s: %s\n", isDraft ? "draft" : "email", e.getMessage());
         }
+    }
+
+    @FXML
+    private void actionDelete() {
+        System.out.println("deleting");
+    }
+
+    @FXML
+    private void actionStar() {
+        boolean isStarred = starIcon.getIconLiteral().equals("fa-star");
+        starIcon.setIconLiteral(isStarred ? "fa-star-o" : "fa-star");
+        starIcon.setIconColor(isStarred ? Paint.valueOf("#000000") : starIconPaint);
+
+        Task<Void> starTask = new Task<>() {
+            @Override
+            protected Void call() throws MessagingException {
+                message.setFlag(Flags.Flag.FLAGGED, !isStarred);
+                System.out.printf("Successfully %s email with subject: %s\n", isStarred ? "unstarred" : "starred", message.getSubject());
+                return null;
+            }
+        };
+
+        new Thread(starTask).start();
     }
 }
