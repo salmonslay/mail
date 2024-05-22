@@ -27,7 +27,7 @@
                <children>
                   <StackedFontIcon iconSize="18" onMouseClicked="#actionDelete">
                      <children>
-                        <FontIcon fx:id="deleteIcon" iconLiteral="fa-trash-o" onMouseClicked="#actionDelete" opacity="0.7" />
+                        <FontIcon fx:id="deleteIcon" iconLiteral="fa-trash-o" opacity="0.7" />
                      </children>
                      <FlowPane.margin>
                         <Insets left="6.0" right="6.0" />
