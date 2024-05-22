@@ -82,12 +82,4 @@ public class FolderCell extends ListCell<Folder> implements SofView {
     public Pane getView() {
         return rootPane;
     }
-
-    /**
-     * Displays the emails from this folder in the inbox.
-     */
-    @FXML
-    protected void actionSetFolder() {
-        InboxView.showFolder(folder);
-    }
 }

@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import kiwi.sofia.mail.common.AuthorMode;
 import kiwi.sofia.mail.view.AuthorView;
 import kiwi.sofia.mail.view.EmailView;
@@ -30,7 +30,7 @@ public class EmailCell extends ListCell<Message> {
     @FXML
     private Label dateLabel;
     @FXML
-    private GridPane gridPane;
+    private Pane rootPane;
 
     /**
      * The email message of this cell.
@@ -75,7 +75,7 @@ public class EmailCell extends ListCell<Message> {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, locale);
             dateLabel.setText(simpleDateFormat.format(date));
 
-            setGraphic(gridPane);
+            setGraphic(rootPane);
             setText(null);
         } catch (Exception e) {
             System.out.println("Failed to load EmailCell.fxml: " + e.getMessage());

@@ -3,28 +3,41 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 
-<GridPane fx:id="gridPane" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#openEmail" prefHeight="28.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
-  <columnConstraints>
-    <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="120.0" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="200.0" prefWidth="500.0" />
-      <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="178.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-  </rowConstraints>
+
+<StackPane fx:id="rootPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label fx:id="fromLabel" prefHeight="17.0" text="From " />
-      <Label fx:id="subjectLabel" text="Subject" GridPane.columnIndex="1">
-         <padding>
-            <Insets left="10.0" />
-         </padding>
-      </Label>
-      <Label fx:id="dateLabel" alignment="CENTER_RIGHT" prefWidth="1000.0" text="Date" textAlignment="RIGHT" GridPane.columnIndex="2">
-         <padding>
-            <Insets right="5.0" />
-         </padding></Label>
+      <GridPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="28.0">
+        <columnConstraints>
+          <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="120.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="200.0" prefWidth="500.0" />
+            <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="178.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label fx:id="fromLabel" prefHeight="17.0" text="From " />
+            <Label fx:id="subjectLabel" text="Subject" GridPane.columnIndex="1">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Label fx:id="dateLabel" alignment="CENTER_RIGHT" prefWidth="1000.0" text="Date" textAlignment="RIGHT" GridPane.columnIndex="2">
+               <padding>
+                  <Insets right="5.0" />
+               </padding>
+            </Label>
+         </children>
+      </GridPane>
+      <FlowPane fx:id="hitbox" onMouseClicked="#openEmail">
+         <StackPane.margin>
+            <Insets right="100.0" />
+         </StackPane.margin>
+      </FlowPane>
    </children>
-</GridPane>
+</StackPane>

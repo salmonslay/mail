@@ -14,6 +14,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import kiwi.sofia.mail.common.ImapManager;
+import kiwi.sofia.mail.common.NoSelectionModel;
 import kiwi.sofia.mail.task.FetchEmailsTask;
 import kiwi.sofia.mail.task.GetFoldersTask;
 import kiwi.sofia.mail.template.EmailCell;
@@ -67,9 +68,15 @@ public class InboxView implements SofView {
 
             emailListView.setItems(messageObservableList);
             emailListView.setCellFactory(param -> new EmailCell());
+            emailListView.setSelectionModel(new NoSelectionModel<>()); // disable selection
+            emailListView.setFocusTraversable(false);
 
             folderListView.setItems(folderObservableList);
             folderListView.setCellFactory(param -> new FolderCell());
+            folderListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null)
+                    showFolder(newValue); // TODO: make it clear which inbox you've selected
+            });
 
             folderStatusLabel.setText("");
         } catch (Exception e) {
@@ -77,6 +84,9 @@ public class InboxView implements SofView {
         }
     }
 
+    /**
+     * Displays the emails from this folder in the inbox.
+     */
     public static void showFolder(Folder folder) {
         InboxView inboxView = getInstance();
         inboxView.fetchEmails(folder.getFullName());
@@ -250,7 +260,7 @@ public class InboxView implements SofView {
     }
 
     @FXML
-    private void actionCompose(){
+    private void actionCompose() {
         AuthorView.show();
     }
 }
