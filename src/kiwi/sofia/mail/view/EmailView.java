@@ -16,12 +16,16 @@ import kiwi.sofia.mail.common.AuthorMode;
 import kiwi.sofia.mail.common.BodyParser;
 import kiwi.sofia.mail.common.Pair;
 import kiwi.sofia.mail.task.DownloadAttachmentsTask;
+import kiwi.sofia.mail.task.GetEmailBodyTask;
+import kiwi.sofia.mail.task.SetEmailButtonsTask;
+import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
 /**
@@ -31,7 +35,6 @@ import java.util.prefs.Preferences;
 public class EmailView implements SofView {
     private final Pane rootPane;
     private final Message message;
-    private Object content;
     @FXML
     private Button replyAllButton;
     @FXML
@@ -53,31 +56,65 @@ public class EmailView implements SofView {
     @FXML
     private Circle circle;
     private String html;
+    @FXML
+    private Label statusLabel;
 
     public EmailView(Message message) {
         rootPane = new GridPane();
         this.message = message;
 
         try {
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+
+            // Load in the view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/EmailView.fxml"));
             loader.setController(this);
             loader.load();
 
-            subjectLabel.setText(message.getSubject());
-            content = message.getContent();
-            setBody(content);
+            // Email content task
+            GetEmailBodyTask task = new GetEmailBodyTask(message);
+            task.onSucceededProperty().set(event -> {
+                statusLabel.setText("");
 
-            // Disable attachment button if there are no attachments, and set the count
-            int attachmentCount = BodyParser.attachmentCount(message);
-            attachmentsButton.setDisable(attachmentCount == 0);
-            attachmentsButton.setText("Download and display " + attachmentCount + " attachment" + (attachmentCount == 1 ? "" : "s"));
-            replyAllButton.setDisable(message.getAllRecipients() != null && message.getAllRecipients().length < 2);
+                setBody(task.getValue());
+                displayAttachments();
 
+                System.out.printf("Email content loaded in %d ms%n", stopWatch.getTime());
+            });
+
+            task.onFailedProperty().set(event -> {
+                statusLabel.setText("Failed to load email content");
+            });
+
+            new Thread(task).start();
+
+            // Attachments & reply all
+            SetEmailButtonsTask buttonsTask = new SetEmailButtonsTask(message, attachmentsButton, replyAllButton);
+            new Thread(buttonsTask).start();
+
+            rootPane.getChildren().add(loader.getRoot());
+
+            System.out.printf("EmailView ctor loaded in %d ms%n", stopWatch.getTime());
+        } catch (Exception e) {
+            System.out.println("Failed to load EmailView.fxml: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sets all the labels and the circle.
+     */
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        try {
+            // Set the name, email and subject labels
             String regex = "\"?(.+?)\"? (<.+>)"; // Matches "Name" <email>, without quotes including angle brackets
             String from = message.getFrom()[0].toString();
             senderLabel.setText(from.replaceAll(regex, "$1")); // name (without surrounding quotes)
             emailLabel.setText(from.replaceAll(regex, "$2")); // <email>
+            subjectLabel.setText(message.getSubject());
 
+            // Parse dates
             Locale locale = new Locale("en", "US");
             String pattern = "MMM d, yyyy 'at' K:mm a"; // Mar 15, 2021 at 9:30 AM
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, locale);
@@ -85,28 +122,23 @@ public class EmailView implements SofView {
 
             setCircle(from);
 
+            // Set the to-field
             String toText = getToText();
             toLabel.setText(toText);
             toLabel.setTooltip(new Tooltip(toText)); // in case it's too long to display the user can hover as a fallback
-
-            displayAttachments();
-
-            rootPane.getChildren().add(loader.getRoot());
         } catch (Exception e) {
-            System.out.println("Failed to load EmailView.fxml: " + e.getMessage());
+            System.out.println("Failed to set labels: " + e.getMessage());
         }
     }
 
     /**
      * Sets the web view to the body of the email. Prioritizes HTML over plain text.
      *
-     * @param body The body of the email
+     * @param body A pair of the body & its mime type of the email
      */
-    private void setBody(Object body) {
-        Pair<String, String> result = BodyParser.parse(body, true);
-
-        html = result.getA();
-        if (result.getB().equalsIgnoreCase("text/plain")) // Fix new lines if we're displaying plain text
+    private void setBody(Pair<String, String> body) {
+        html = body.getA();
+        if (body.getB().equalsIgnoreCase("text/plain")) // Fix new lines if we're displaying plain text
             html = html.replaceAll("\n", "<br>");
 
         webView.getEngine().loadContent(html);
@@ -155,10 +187,9 @@ public class EmailView implements SofView {
         String path = window.getAbsolutePath();
         prefs.put("lastPath", path);
 
-        DownloadAttachmentsTask task = new DownloadAttachmentsTask(content, path, BodyParser.getHashCode(message));
+        DownloadAttachmentsTask task = new DownloadAttachmentsTask(message, path, BodyParser.getHashCode(message));
         task.onSucceededProperty().set(event -> {
-            if (task.getValue() == null)
-                return;
+            if (task.getValue() == null) return;
 
             // open the folder in explorer when the attachments are downloaded
             try {
