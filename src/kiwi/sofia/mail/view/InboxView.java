@@ -1,9 +1,6 @@
 package kiwi.sofia.mail.view;
 
-import jakarta.mail.FetchProfile;
-import jakarta.mail.Folder;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
+import jakarta.mail.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -239,7 +236,10 @@ public class InboxView implements SofView {
 
         try {
             ImapManager.getCachedInbox(folderName).fetch(messages, fetchProfile);
-            messageObservableList.addAll(messages);
+            for (Message message : messages) {
+                if (!message.getFlags().contains(Flags.Flag.DELETED))
+                    messageObservableList.add(message);
+            }
 
             System.out.printf("Fetched %d messages\n", messages.length);
         } catch (MessagingException e) {
