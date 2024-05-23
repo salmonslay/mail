@@ -34,7 +34,8 @@ import java.util.prefs.Preferences;
  */
 public class EmailView implements SofView {
     private final Pane rootPane;
-    private final Message message;
+    private static EmailView instance;
+    private Message message;
     @FXML
     private Button replyAllButton;
     @FXML
@@ -59,43 +60,18 @@ public class EmailView implements SofView {
     @FXML
     private Label statusLabel;
 
-    public EmailView(Message message) {
+    private EmailView() {
         rootPane = new GridPane();
-        this.message = message;
 
         try {
-            StopWatch stopWatch = new StopWatch();
-            stopWatch.start();
-
             // Load in the view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/EmailView.fxml"));
             loader.setController(this);
             loader.load();
 
-            // Email content task
-            GetEmailBodyTask task = new GetEmailBodyTask(message);
-            task.onSucceededProperty().set(event -> {
-                statusLabel.setText("");
-
-                setBody(task.getValue());
-                displayAttachments();
-
-                System.out.printf("Email content loaded in %d ms%n", stopWatch.getTime());
-            });
-
-            task.onFailedProperty().set(event -> {
-                statusLabel.setText("Failed to load email content");
-            });
-
-            new Thread(task).start();
-
-            // Attachments & reply all
-            SetEmailButtonsTask buttonsTask = new SetEmailButtonsTask(message, attachmentsButton, replyAllButton);
-            new Thread(buttonsTask).start();
-
             rootPane.getChildren().add(loader.getRoot());
 
-            System.out.printf("EmailView ctor loaded in %d ms%n", stopWatch.getTime());
+            System.out.println("EmailView ctor loaded");
         } catch (Exception e) {
             System.out.println("Failed to load EmailView.fxml: " + e.getMessage());
         }
@@ -104,8 +80,34 @@ public class EmailView implements SofView {
     /**
      * Sets all the labels and the circle.
      */
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize() {
+        System.out.println("EmailView initialize");
+        webView.getEngine().loadContent("");
+
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
+        // Email content task
+        GetEmailBodyTask task = new GetEmailBodyTask(message);
+        task.onSucceededProperty().set(event -> {
+            statusLabel.setText("");
+
+            setBody(task.getValue());
+            displayAttachments();
+
+            System.out.printf("Email content loaded in %d ms%n", stopWatch.getTime());
+        });
+
+        task.onFailedProperty().set(event -> {
+            statusLabel.setText("Failed to load email content");
+        });
+
+        new Thread(task).start();
+
+        // Attachments & reply all
+        SetEmailButtonsTask buttonsTask = new SetEmailButtonsTask(message, attachmentsButton, replyAllButton);
+        new Thread(buttonsTask).start();
+
         try {
             // Set the name, email and subject labels
             String regex = "\"?(.+?)\"? (<.+>)"; // Matches "Name" <email>, without quotes including angle brackets
@@ -230,7 +232,10 @@ public class EmailView implements SofView {
      * @param message The message to display
      */
     public static void show(Message message) {
-        ClientView.setCenter(new EmailView(message).getView());
+        EmailView instance = getInstance();
+        instance.message = message;
+        instance.initialize();
+        ClientView.setCenter(instance.getView());
     }
 
     /**
@@ -266,5 +271,12 @@ public class EmailView implements SofView {
         html = html.replaceAll(regex, replacement) + " ";
 
         webView.getEngine().loadContent(html);
+    }
+
+    private static EmailView getInstance() {
+        if (instance == null) {
+            instance = new EmailView();
+        }
+        return instance;
     }
 }
