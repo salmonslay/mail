@@ -3,6 +3,7 @@ package kiwi.sofia.mail.view;
 import jakarta.mail.Message;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.print.PrinterJob;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -167,7 +168,13 @@ public class EmailView implements SofView {
 
     @FXML
     private void actionPrintEmail() {
-        System.out.println("Printing email");
+        System.out.println("Creating print job");
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job != null) {
+            job.showPrintDialog(rootPane.getScene().getWindow());
+            webView.getEngine().print(job);
+            job.endJob();
+        }
     }
 
     @FXML
