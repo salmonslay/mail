@@ -27,11 +27,13 @@ public class LoginView implements SofView {
     private final TextField imapHostField;
     private final ComboBox<Integer> imapPortField;
     private final CheckBox rememberMe;
+    private final CheckBox rememberPassword;
     private final Button loginButton;
     private final Label statusLabel;
     private final TextField displayNameField;
 
     public LoginView() {
+        Preferences prefs = Preferences.userNodeForPackage(LoginView.class);
         ConnectionRecord smtpSet = ConnectionRecord.getSmtpConnectionSet();
         ConnectionRecord imapSet = ConnectionRecord.getImapConnectionSet();
 
@@ -100,9 +102,13 @@ public class LoginView implements SofView {
         contentPane.add(new Separator(), 0, line++, 2, 1);
 
         rememberMe = new CheckBox("Remember me");
-        rememberMe.setSelected(true);
+        rememberMe.setSelected(prefs.getBoolean("rememberMe", false));
         rememberMe.setTooltip(new Tooltip("This will not remember your password"));
         contentPane.add(rememberMe, 0, line++, 2, 1);
+
+        rememberPassword = new CheckBox("Remember password");
+        rememberPassword.setSelected(prefs.getBoolean("rememberPassword", false));
+        contentPane.add(rememberPassword, 0, line++, 2, 1);
 
         loginButton = new Button("Login");
         contentPane.add(loginButton, 0, line++, 2, 1);
@@ -113,6 +119,17 @@ public class LoginView implements SofView {
     }
 
     private void login(ActionEvent e) {
+        if (rememberPassword.isSelected()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Security warning");
+            alert.setHeaderText("Your password(s) will be saved in plaintext in the registry, and could be retrieved\nby anyone with access to your computer. This is not recommended.");
+            alert.setContentText("Are you sure you want to continue?");
+            alert.showAndWait();
+
+            if (alert.getResult().getButtonData().isCancelButton()) {
+                return;
+            }
+        }
         saveCredentials();
         System.out.println("Logging in...");
 
@@ -142,8 +159,8 @@ public class LoginView implements SofView {
 
     /**
      * Saves the login credentials to prefs (the registry).
-     * They will be saved regardless of user preference, but cleared upon exit in case the user wishes so.
-     * Passwords will always be cleared.
+     * They will be saved regardless of user preference (to be used in the application),
+     * but cleared upon exit in case the user wishes so.
      */
     private void saveCredentials() {
         Preferences prefs = Preferences.userNodeForPackage(LoginView.class);
@@ -155,6 +172,7 @@ public class LoginView implements SofView {
         prefs.put("imapHost", imapHostField.getText());
         prefs.putInt("imapPort", imapPortField.getValue());
         prefs.putBoolean("rememberMe", rememberMe.isSelected());
+        prefs.putBoolean("rememberPassword", rememberPassword.isSelected());
 
         prefs.put("smtpPassword", smtpPasswordField.getText());
         prefs.put("imapPassword", imapPasswordField.getText());
@@ -168,19 +186,25 @@ public class LoginView implements SofView {
      */
     public static void clearCredentials() {
         Preferences prefs = Preferences.userNodeForPackage(LoginView.class);
-//        prefs.remove("smtpPassword"); // TODO: clear these
-//        prefs.remove("imapPassword");
 
-        if (prefs.getBoolean("rememberMe", false))
-            return;
+        if (!prefs.getBoolean("rememberMe", false)) {
+            prefs.remove("smtpDisplayName");
+            prefs.remove("smtpUsername");
+            prefs.remove("smtpHost");
+            prefs.remove("smtpPort");
+            prefs.remove("imapUsername");
+            prefs.remove("imapHost");
+            prefs.remove("imapPort");
 
-        prefs.remove("smtpDisplayName");
-        prefs.remove("smtpUsername");
-        prefs.remove("smtpHost");
-        prefs.remove("smtpPort");
-        prefs.remove("imapUsername");
-        prefs.remove("imapHost");
-        prefs.remove("imapPort");
+            System.out.println("Cleared login details");
+        }
+
+        if (!prefs.getBoolean("rememberPassword", false)) {
+            prefs.remove("smtpPassword");
+            prefs.remove("imapPassword");
+
+            System.out.println("Cleared passwords");
+        }
     }
 
     public Pane getView() {
