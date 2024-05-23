@@ -7,6 +7,7 @@ import java.util.Properties;
 
 public class ImapManager {
     private static final HashMap<String, Folder> folders = new HashMap<>();
+    private static Store store;
 
     /**
      * Gets the user's inbox folder through IMAP. Blocking.
@@ -14,10 +15,10 @@ public class ImapManager {
      * @return a pair of the inbox folder and an exception if an error occurred
      */
     public static Pair<Folder, Exception> getFolderExc(String folderName) {
-        System.out.println("Getting inbox");
+        System.out.println("Fetching folder from server");
 
         try {
-            Store store = getStoreExc().getA();
+            Store store = getCachedStore();
             Folder folder = store.getFolder(folderName);
 
             folder.open(Folder.READ_WRITE);
@@ -29,7 +30,7 @@ public class ImapManager {
     }
 
     public static Pair<Store, Exception> getStoreExc() {
-        System.out.println("Getting store");
+        System.out.println("Fetching store from server");
 
         try {
             ConnectionRecord set = ConnectionRecord.getImapConnectionSet();
@@ -54,7 +55,7 @@ public class ImapManager {
      */
     public static Folder[] getFolders() {
         try {
-            return getStoreExc().getA().getDefaultFolder().list("*");
+            return getCachedStore().getDefaultFolder().list("*");
         } catch (MessagingException e) {
             return null;
         }
@@ -80,5 +81,13 @@ public class ImapManager {
             folders.put(folderName, getFolder(folderName));
         }
         return folders.get(folderName);
+    }
+
+    public static Store getCachedStore() {
+        if (store == null) {
+            System.out.println("Re-fetching non-cached store");
+            store = getStoreExc().getA();
+        }
+        return store;
     }
 }
