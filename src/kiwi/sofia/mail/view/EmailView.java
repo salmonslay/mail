@@ -1,12 +1,10 @@
 package kiwi.sofia.mail.view;
 
-import jakarta.mail.Address;
 import jakarta.mail.Message;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -17,7 +15,7 @@ import kiwi.sofia.mail.common.BodyParser;
 import kiwi.sofia.mail.common.Pair;
 import kiwi.sofia.mail.task.DownloadAttachmentsTask;
 import kiwi.sofia.mail.task.GetEmailBodyTask;
-import kiwi.sofia.mail.task.SetEmailButtonsTask;
+import kiwi.sofia.mail.task.SetNonFetchedEmailValuesTask;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.File;
@@ -103,7 +101,7 @@ public class EmailView implements SofView {
         new Thread(task).start();
 
         // Attachments & reply all
-        SetEmailButtonsTask buttonsTask = new SetEmailButtonsTask(message, attachmentsButton, replyAllButton);
+        SetNonFetchedEmailValuesTask buttonsTask = new SetNonFetchedEmailValuesTask(message, attachmentsButton, replyAllButton, toLabel);
         new Thread(buttonsTask).start();
 
         try {
@@ -121,11 +119,6 @@ public class EmailView implements SofView {
             dateLabel.setText(simpleDateFormat.format(message.getSentDate()));
 
             setCircle(from);
-
-            // Set the to-field
-            String toText = getToText();
-            toLabel.setText(toText);
-            toLabel.setTooltip(new Tooltip(toText)); // in case it's too long to display the user can hover as a fallback
         } catch (Exception e) {
             System.out.println("Failed to set labels: " + e.getMessage());
         }
@@ -234,28 +227,6 @@ public class EmailView implements SofView {
         instance.message = message;
         instance.initialize();
         ClientView.setCenter(instance.getView());
-    }
-
-    /**
-     * Gets the recipients of the email.
-     *
-     * @return The recipients of the email in the format "to email1, email2, ...", or "to me" if the recipients are null.
-     */
-    private String getToText() {
-        try {
-            Address[] recipients = message.getAllRecipients();
-            if (recipients != null && recipients.length > 0) {
-                String to = "to: ";
-                for (int i = 0; i < recipients.length; i++) {
-                    Address recipient = recipients[i];
-                    to += recipient;
-                    if (i < recipients.length - 1) to += ", ";
-                }
-                return to;
-            }
-        } catch (Exception ignored) {
-        }
-        return "to me";
     }
 
     /**
