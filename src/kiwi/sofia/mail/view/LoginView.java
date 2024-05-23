@@ -119,8 +119,10 @@ public class LoginView implements SofView {
     }
 
     private void login(ActionEvent e) {
-        if (rememberPassword.isSelected()) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "", new ButtonType("Continue", ButtonBar.ButtonData.YES), ButtonType.CANCEL);
+        Preferences prefs = Preferences.userNodeForPackage(LoginView.class);
+
+        if (rememberPassword.isSelected() && !prefs.getBoolean("dontWarnAboutPasswords", false)) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "", new ButtonType("Continue", ButtonBar.ButtonData.FINISH), new ButtonType("Don't ask again", ButtonBar.ButtonData.YES), ButtonType.CANCEL);
             alert.initOwner(getView().getScene().getWindow());
             alert.setTitle("Security warning");
             alert.setHeaderText("Your password(s) will be saved in plaintext in the registry, and could be retrieved by anyone with\naccess to your computer. This might be convenient, but is not recommended.");
@@ -128,9 +130,14 @@ public class LoginView implements SofView {
             alert.showAndWait();
 
             if (alert.getResult().getButtonData().isCancelButton()) {
+                rememberPassword.setSelected(false);
                 return;
+            } else if (alert.getResult().getButtonData().getTypeCode().equals("Y")) {
+                prefs.putBoolean("dontWarnAboutPasswords", true);
+                System.out.println("Not warning about passwords anymore");
             }
         }
+        
         saveCredentials();
         System.out.println("Logging in...");
 
