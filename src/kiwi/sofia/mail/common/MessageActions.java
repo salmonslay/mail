@@ -9,26 +9,26 @@ import javafx.scene.control.Alert;
 import kiwi.sofia.mail.view.InboxView;
 
 public class MessageActions {
-    public static void starMessage(Message message, boolean isStarred) {
-        Task<Void> starTask = new Task<>() {
+    public static void flagMessage(Message message, Flags.Flag flag, boolean set) {
+        Task<Void> flagTask = new Task<>() {
             @Override
             protected Void call() throws MessagingException {
-                message.setFlag(Flags.Flag.FLAGGED, !isStarred);
-                System.out.printf("Successfully %s email with subject: %s\n", isStarred ? "unstarred" : "starred", message.getSubject());
+                message.setFlag(flag, set);
+                System.out.printf("Successfully %s flag on email with subject: %s\n", set ? "set" : "unset", message.getSubject());
                 return null;
             }
         };
 
         // Display an error if starring failed
-        starTask.setOnFailed(e -> {
+        flagTask.setOnFailed(e -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Failed to star email");
+            alert.setTitle("Failed to apply flag to email");
             alert.setHeaderText(null);
-            alert.setContentText(starTask.getException().getMessage());
+            alert.setContentText(flagTask.getException().getMessage());
             alert.showAndWait();
         });
 
-        new Thread(starTask).start();
+        new Thread(flagTask).start();
     }
 
     public static void askAndTrashMessage(Message message) {

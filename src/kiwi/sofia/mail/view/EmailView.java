@@ -191,12 +191,12 @@ public class EmailView implements SofView {
         starIcon.setIconLiteral(isStarred ? "fa-star-o" : "fa-star");
         starIcon.setIconColor(isStarred ? Paint.valueOf("#000000") : Constants.starIconPaint);
 
-        MessageActions.starMessage(message, isStarred);
+        MessageActions.flagMessage(message, Flags.Flag.FLAGGED, !isStarred);
     }
 
     @FXML
     private void actionTrashEmail() {
-        System.out.println("Trashing email");
+        MessageActions.askAndTrashMessage(message);
     }
 
     @FXML

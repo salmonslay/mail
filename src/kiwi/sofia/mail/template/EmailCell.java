@@ -146,6 +146,6 @@ public class EmailCell extends ListCell<Message> {
         starIcon.setIconLiteral(isStarred ? "fa-star-o" : "fa-star");
         starIcon.setIconColor(isStarred ? Paint.valueOf("#000000") : Constants.starIconPaint);
 
-        MessageActions.starMessage(message, isStarred);
+        MessageActions.flagMessage(message, Flags.Flag.FLAGGED, !isStarred);
     }
 }
