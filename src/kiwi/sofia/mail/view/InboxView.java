@@ -249,9 +249,11 @@ public class InboxView implements SofView {
 
         try {
             ImapManager.getCachedInbox(folderName).fetch(messages, fetchProfile);
+            messageObservableList.addAll(messages);
+
             for (Message message : messages) {
-                if (!message.getFlags().contains(Flags.Flag.DELETED))
-                    messageObservableList.add(message);
+                if (message.getFlags().contains(Flags.Flag.DELETED))
+                    messageObservableList.remove(message);
             }
 
             System.out.printf("Fetched %d messages\n", messages.length);
