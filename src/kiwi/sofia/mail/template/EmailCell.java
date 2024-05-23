@@ -1,13 +1,10 @@
 package kiwi.sofia.mail.template;
 
 import jakarta.mail.Flags;
-import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.Pane;
@@ -15,7 +12,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import kiwi.sofia.mail.common.AuthorMode;
-import kiwi.sofia.mail.common.ImapManager;
+import kiwi.sofia.mail.common.Constants;
 import kiwi.sofia.mail.common.MessageActions;
 import kiwi.sofia.mail.view.AuthorView;
 import kiwi.sofia.mail.view.EmailView;
@@ -51,7 +48,6 @@ public class EmailCell extends ListCell<Message> {
     private Message message;
 
     private static Font unreadFont;
-    private static final Paint starIconPaint = Paint.valueOf("#ffbf00"); // gold
 
     @Override
     protected void updateItem(Message message, boolean empty) {
@@ -104,7 +100,7 @@ public class EmailCell extends ListCell<Message> {
 
             if (flags.contains(Flags.Flag.FLAGGED)) {
                 starIcon.setIconLiteral("fa-star");
-                starIcon.setIconColor(starIconPaint);
+                starIcon.setIconColor(Constants.starIconPaint);
             }
 
             setGraphic(rootPane);
@@ -148,7 +144,7 @@ public class EmailCell extends ListCell<Message> {
         // We set it before we actually star the email to give immediate feedback
         boolean isStarred = starIcon.getIconLiteral().equals("fa-star");
         starIcon.setIconLiteral(isStarred ? "fa-star-o" : "fa-star");
-        starIcon.setIconColor(isStarred ? Paint.valueOf("#000000") : starIconPaint);
+        starIcon.setIconColor(isStarred ? Paint.valueOf("#000000") : Constants.starIconPaint);
 
         MessageActions.starMessage(message, isStarred);
     }
