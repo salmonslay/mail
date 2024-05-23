@@ -22,10 +22,8 @@ import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
 /**
@@ -78,7 +76,7 @@ public class EmailView implements SofView {
     }
 
     /**
-     * Sets all the labels and the circle.
+     * Loads all content, sets the labels and the circle.
      */
     public void initialize() {
         System.out.println("EmailView initialize");
