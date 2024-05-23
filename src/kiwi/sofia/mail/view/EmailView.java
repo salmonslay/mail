@@ -156,6 +156,11 @@ public class EmailView implements SofView {
     }
 
     @FXML
+    private void actionReplyAll() {
+        AuthorView.show(message, AuthorMode.REPLY_ALL);
+    }
+
+    @FXML
     private void actionForward() {
         AuthorView.show(message, AuthorMode.FORWARD);
     }
