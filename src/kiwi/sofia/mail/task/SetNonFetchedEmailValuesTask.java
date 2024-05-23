@@ -32,9 +32,10 @@ public class SetNonFetchedEmailValuesTask extends Task<Void> {
 
     @Override
     protected Void call() {
+        int attachmentCount = BodyParser.attachmentCount(msg);
+
         Platform.runLater(() -> {
             try {
-                int attachmentCount = BodyParser.attachmentCount(msg);
                 attachmentsButton.setDisable(attachmentCount == 0); // disable if no attachments
                 attachmentsButton.setText("Download and display " + attachmentCount + " attachment" + (attachmentCount == 1 ? "" : "s")); // set button text
 
