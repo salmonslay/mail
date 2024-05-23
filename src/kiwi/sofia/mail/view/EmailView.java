@@ -201,7 +201,8 @@ public class EmailView implements SofView {
 
     @FXML
     private void actionUnreadEmail() {
-        System.out.println("Marking email as unread");
+        MessageActions.flagMessage(message, Flags.Flag.SEEN, false);
+        ClientView.showInbox();
     }
 
     /**
