@@ -16,6 +16,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import kiwi.sofia.mail.common.AuthorMode;
 import kiwi.sofia.mail.common.ImapManager;
+import kiwi.sofia.mail.common.MessageActions;
 import kiwi.sofia.mail.view.AuthorView;
 import kiwi.sofia.mail.view.EmailView;
 import kiwi.sofia.mail.view.InboxView;
@@ -137,52 +138,8 @@ public class EmailCell extends ListCell<Message> {
      * Asks the user if they want to delete this message.
      */
     @FXML
-    private void actionDelete() throws MessagingException {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Delete email");
-        alert.setHeaderText(null);
-        alert.setContentText("Are you sure you want to delete the email \"" + message.getSubject() + "\"?");
-        alert.showAndWait();
-
-        if (alert.getResult().getButtonData().isCancelButton()) {
-            return;
-        }
-
-        Task<Void> deleteTask = new Task<>() {
-            @Override
-            protected Void call() throws MessagingException {
-                message.setFlag(Flags.Flag.DELETED, true);
-
-                // Special case for Gmail: move to trash instead of deleting
-                // https://javaee.github.io/javamail/FAQ
-                Folder trash = ImapManager.getFolder("[Gmail]/Trash");
-                if (trash != null)
-                    message.getFolder().copyMessages(new Message[]{message}, trash);
-
-                System.out.printf("Successfully deleted email with subject: %s\n", message.getSubject());
-                return null;
-            }
-        };
-
-        deleteTask.setOnFailed(e -> {
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-            errorAlert.setTitle("Failed to delete email");
-            errorAlert.setHeaderText(null);
-            errorAlert.setContentText(deleteTask.getException().getMessage());
-            errorAlert.showAndWait();
-        });
-
-        deleteTask.setOnSucceeded(e -> {
-            InboxView.getInstance().fetchEmails();
-
-            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-            successAlert.setTitle("Email deleted");
-            successAlert.setHeaderText(null);
-            successAlert.setContentText("The email has been successfully deleted.");
-            successAlert.showAndWait();
-        });
-
-        new Thread(deleteTask).start();
+    private void actionDelete() {
+        MessageActions.askAndTrashMessage(message);
     }
 
     @FXML
@@ -193,24 +150,6 @@ public class EmailCell extends ListCell<Message> {
         starIcon.setIconLiteral(isStarred ? "fa-star-o" : "fa-star");
         starIcon.setIconColor(isStarred ? Paint.valueOf("#000000") : starIconPaint);
 
-        Task<Void> starTask = new Task<>() {
-            @Override
-            protected Void call() throws MessagingException {
-                message.setFlag(Flags.Flag.FLAGGED, !isStarred);
-                System.out.printf("Successfully %s email with subject: %s\n", isStarred ? "unstarred" : "starred", message.getSubject());
-                return null;
-            }
-        };
-
-        // Display an error if starring failed
-        starTask.setOnFailed(e -> {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Failed to star email");
-            alert.setHeaderText(null);
-            alert.setContentText(starTask.getException().getMessage());
-            alert.showAndWait();
-        });
-
-        new Thread(starTask).start();
+        MessageActions.starMessage(message, isStarred);
     }
 }
