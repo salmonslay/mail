@@ -100,7 +100,10 @@ public class EmailView implements SofView {
 
         new Thread(task).start();
 
-        // Attachments & reply all
+        // Attachments, to-text & reply all. We disable them to prevent user interaction before the values are set
+        toLabel.setText("to: ");
+        attachmentsButton.setDisable(true);
+        replyAllButton.setDisable(true);
         SetNonFetchedEmailValuesTask buttonsTask = new SetNonFetchedEmailValuesTask(message, attachmentsButton, replyAllButton, toLabel);
         new Thread(buttonsTask).start();
 
