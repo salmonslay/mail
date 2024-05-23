@@ -137,7 +137,7 @@ public class LoginView implements SofView {
                 System.out.println("Not warning about passwords anymore");
             }
         }
-        
+
         saveCredentials();
         System.out.println("Logging in...");
 
