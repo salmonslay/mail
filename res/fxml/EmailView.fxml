@@ -120,7 +120,7 @@
                <right>
                   <FlowPane alignment="CENTER_RIGHT" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button mnemonicParsing="false">
+                        <Button mnemonicParsing="false" onAction="#actionPrintEmail">
                            <FlowPane.margin>
                               <Insets left="4.0" right="4.0" />
                            </FlowPane.margin>
@@ -138,7 +138,7 @@
                               <Tooltip text="Print message" />
                            </tooltip>
                         </Button>
-                        <Button layoutX="173.0" layoutY="16.0" mnemonicParsing="false">
+                        <Button layoutX="173.0" layoutY="16.0" mnemonicParsing="false" onAction="#actionStarEmail">
                            <padding>
                               <Insets bottom="6.0" left="8.0" right="8.0" top="6.0" />
                            </padding>
@@ -156,7 +156,7 @@
                               <Tooltip text="Star" />
                            </tooltip>
                         </Button>
-                        <Button layoutX="167.0" layoutY="16.0" mnemonicParsing="false">
+                        <Button layoutX="167.0" layoutY="16.0" mnemonicParsing="false" onAction="#actionTrashEmail">
                            <padding>
                               <Insets bottom="6.0" left="8.0" right="8.0" top="6.0" />
                            </padding>
@@ -174,7 +174,7 @@
                               <Tooltip text="Move to trash" />
                            </tooltip>
                         </Button>
-                        <Button layoutX="171.0" layoutY="16.0" mnemonicParsing="false">
+                        <Button layoutX="171.0" layoutY="16.0" mnemonicParsing="false" onAction="#actionUnreadEmail">
                            <padding>
                               <Insets bottom="6.0" left="8.0" right="8.0" top="6.0" />
                            </padding>

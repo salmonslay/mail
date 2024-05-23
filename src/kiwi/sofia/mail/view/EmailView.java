@@ -161,8 +161,23 @@ public class EmailView implements SofView {
     }
 
     @FXML
-    private void actionReplyAll() {
-        AuthorView.show(message, AuthorMode.REPLY_ALL);
+    private void actionPrintEmail() {
+        System.out.println("Printing email");
+    }
+
+    @FXML
+    private void actionStarEmail() {
+        System.out.println("Starring email");
+    }
+
+    @FXML
+    private void actionTrashEmail() {
+        System.out.println("Trashing email");
+    }
+
+    @FXML
+    private void actionUnreadEmail() {
+        System.out.println("Marking email as unread");
     }
 
     /**
