@@ -1,5 +1,6 @@
 package kiwi.sofia.mail.view;
 
+import jakarta.mail.Flags;
 import jakarta.mail.Message;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,16 +9,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
-import kiwi.sofia.mail.common.AuthorMode;
-import kiwi.sofia.mail.common.BodyParser;
-import kiwi.sofia.mail.common.Pair;
+import kiwi.sofia.mail.common.*;
 import kiwi.sofia.mail.task.DownloadAttachmentsTask;
 import kiwi.sofia.mail.task.GetEmailBodyTask;
 import kiwi.sofia.mail.task.SetNonFetchedEmailValuesTask;
 import org.apache.commons.lang3.time.StopWatch;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,6 +57,8 @@ public class EmailView implements SofView {
     private String html;
     @FXML
     private Label statusLabel;
+    @FXML
+    private FontIcon starIcon;
 
     private EmailView() {
         rootPane = new GridPane();
@@ -122,6 +125,11 @@ public class EmailView implements SofView {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, locale);
             dateLabel.setText(simpleDateFormat.format(message.getSentDate()));
 
+            if (message.getFlags().contains(Flags.Flag.FLAGGED)) {
+                starIcon.setIconLiteral("fa-star");
+                starIcon.setIconColor(Constants.starIconPaint);
+            }
+
             setCircle(from);
         } catch (Exception e) {
             System.out.println("Failed to set labels: " + e.getMessage());
@@ -179,7 +187,11 @@ public class EmailView implements SofView {
 
     @FXML
     private void actionStarEmail() {
-        System.out.println("Starring email");
+        boolean isStarred = starIcon.getIconLiteral().equals("fa-star");
+        starIcon.setIconLiteral(isStarred ? "fa-star-o" : "fa-star");
+        starIcon.setIconColor(isStarred ? Paint.valueOf("#000000") : Constants.starIconPaint);
+
+        MessageActions.starMessage(message, isStarred);
     }
 
     @FXML

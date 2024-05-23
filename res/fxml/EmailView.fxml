@@ -145,7 +145,7 @@
                            <graphic>
                               <StackedFontIcon iconSize="24">
                                  <children>
-                                    <FontIcon iconLiteral="fa-star-o" />
+                                    <FontIcon fx:id="starIcon" iconLiteral="fa-star-o" />
                                  </children>
                               </StackedFontIcon>
                            </graphic>
