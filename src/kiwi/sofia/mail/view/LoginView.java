@@ -120,9 +120,10 @@ public class LoginView implements SofView {
 
     private void login(ActionEvent e) {
         if (rememberPassword.isSelected()) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            Alert alert = new Alert(Alert.AlertType.WARNING, "", new ButtonType("Continue", ButtonBar.ButtonData.YES), ButtonType.CANCEL);
+            alert.initOwner(getView().getScene().getWindow());
             alert.setTitle("Security warning");
-            alert.setHeaderText("Your password(s) will be saved in plaintext in the registry, and could be retrieved\nby anyone with access to your computer. This is not recommended.");
+            alert.setHeaderText("Your password(s) will be saved in plaintext in the registry, and could be retrieved by anyone with\naccess to your computer. This might be convenient, but is not recommended.");
             alert.setContentText("Are you sure you want to continue?");
             alert.showAndWait();
 
