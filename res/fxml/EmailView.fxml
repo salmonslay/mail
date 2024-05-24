@@ -118,7 +118,7 @@
                   </Label>
                </left>
                <right>
-                  <FlowPane alignment="CENTER_RIGHT" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                  <FlowPane alignment="CENTER_RIGHT" prefHeight="200.0" prefWidth="300.0" BorderPane.alignment="CENTER">
                      <children>
                         <Button mnemonicParsing="false" onAction="#actionPrintEmail">
                            <FlowPane.margin>
@@ -191,6 +191,24 @@
                            <tooltip>
                               <Tooltip text="Mark as unread" />
                            </tooltip>
+                        </Button>
+                        <Button layoutX="29.0" layoutY="16.0" mnemonicParsing="false" onAction="#actionMoveEmail">
+                           <padding>
+                              <Insets bottom="6.0" left="8.0" right="8.0" top="6.0" />
+                           </padding>
+                           <graphic>
+                              <StackedFontIcon iconSize="24">
+                                 <children>
+                                    <FontIcon iconLiteral="fa-bookmark-o" />
+                                 </children>
+                              </StackedFontIcon>
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Print message" />
+                           </tooltip>
+                           <FlowPane.margin>
+                              <Insets left="4.0" right="4.0" />
+                           </FlowPane.margin>
                         </Button>
                      </children>
                      <BorderPane.margin>

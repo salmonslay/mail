@@ -1,7 +1,10 @@
 package kiwi.sofia.mail.view;
 
+import com.sun.mail.imap.IMAPFolder;
 import jakarta.mail.Flags;
+import jakarta.mail.Folder;
 import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.print.PrinterJob;
@@ -172,6 +175,20 @@ public class EmailView implements SofView {
     @FXML
     private void actionForward() {
         AuthorView.show(message, AuthorMode.FORWARD);
+    }
+
+    @FXML
+    private void actionMoveEmail() {
+        try {
+            IMAPFolder folder = (IMAPFolder) message.getFolder();
+            Folder dest = ImapManager.getCachedStore().getFolder("Outlook");
+
+            folder.open(Folder.READ_WRITE);
+            dest.open(Folder.READ_WRITE);
+            folder.moveMessages(new Message[]{message}, dest);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
