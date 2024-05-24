@@ -125,7 +125,7 @@ public class AuthorView implements SofView {
         System.out.println("Sending email");
         disableButtons(true);
 
-        SendEmailTask sendTask = new SendEmailTask(addressField.getText(), subjectField.getText(), messageField.getHtmlText(), files);
+        SendEmailTask sendTask = new SendEmailTask(addressField.getText().trim(), subjectField.getText(), messageField.getHtmlText(), files);
 
         filesAttachedLabel.textProperty().bind(sendTask.messageProperty());
 
