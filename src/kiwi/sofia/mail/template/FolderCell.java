@@ -6,15 +6,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.Pane;
-import kiwi.sofia.mail.view.InboxView;
+import kiwi.sofia.mail.common.Pair;
 import kiwi.sofia.mail.view.SofView;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 /**
  * A cell that contains an icon and a label for a specific folder.
  * Can be clicked to display the emails in that folder.
+ * <p>
+ * Pair is used to determine if the cell is the "Create folder" cell.
  */
-public class FolderCell extends ListCell<Folder> implements SofView {
+public class FolderCell extends ListCell<Pair<Folder, Boolean>> implements SofView {
     @FXML
     private Pane rootPane;
     @FXML
@@ -23,8 +25,8 @@ public class FolderCell extends ListCell<Folder> implements SofView {
     private FontIcon icon;
 
     @Override
-    protected void updateItem(Folder folder, boolean empty) {
-        super.updateItem(folder, empty);
+    protected void updateItem(Pair<Folder, Boolean> folderPair, boolean empty) {
+        super.updateItem(folderPair, empty);
 
         if (empty) return;
 
@@ -33,8 +35,15 @@ public class FolderCell extends ListCell<Folder> implements SofView {
             loader.setController(this);
             loader.load();
 
+            if (folderPair.getB()) { // Special case for the "Create folder" cell
+                folderLabel.setText("Create folder");
+                setFolderIcon("new");
+                setGraphic(rootPane);
+                return;
+            }
+
             String pattern = "\\[Gmail\\]\\/(.+)"; // Matches [Gmail]/(folderName)
-            String folderName = folder.getFullName();
+            String folderName = folderPair.getA().getFullName();
 
             // Special case for Gmail folders & INBOX
             if (folderName.matches(pattern) || folderName.equals("INBOX")) {
@@ -77,6 +86,8 @@ public class FolderCell extends ListCell<Folder> implements SofView {
             icon.setIconLiteral("fa-bookmark-o");
         else if (folderName.equalsIgnoreCase("inbox"))
             icon.setIconLiteral("fa-inbox");
+        else if (folderName.equalsIgnoreCase("new"))
+            icon.setIconLiteral("fa-plus");
     }
 
     @Override

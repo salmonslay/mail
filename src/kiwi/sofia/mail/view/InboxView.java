@@ -12,6 +12,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import kiwi.sofia.mail.common.ImapManager;
 import kiwi.sofia.mail.common.NoSelectionModel;
+import kiwi.sofia.mail.common.Pair;
 import kiwi.sofia.mail.task.FetchEmailsTask;
 import kiwi.sofia.mail.task.GetFoldersTask;
 import kiwi.sofia.mail.template.EmailCell;
@@ -33,7 +34,7 @@ public class InboxView implements SofView {
     @FXML
     private ListView<Message> emailListView;
     @FXML
-    private ListView<Folder> folderListView;
+    private ListView<Pair<Folder, Boolean>> folderListView;
     @FXML
     private StackPane stackPane;
     @FXML
@@ -49,7 +50,7 @@ public class InboxView implements SofView {
     @FXML
     private Label pageLabel;
     private final ObservableList<Message> messageObservableList = FXCollections.observableArrayList();
-    private final ObservableList<Folder> folderObservableList = FXCollections.observableArrayList();
+    private final ObservableList<Pair<Folder, Boolean>> folderObservableList = FXCollections.observableArrayList();
     private Message[] messages;
     private int currentPage = 0;
     @FXML
@@ -79,8 +80,10 @@ public class InboxView implements SofView {
             folderListView.setItems(folderObservableList);
             folderListView.setCellFactory(param -> new FolderCell());
             folderListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null)
-                    showFolder(newValue); // TODO: make it clear which inbox you've selected
+                if (!newValue.getB())
+                    showFolder(newValue.getA()); // TODO: make it clear which inbox you've selected
+                else
+                    System.out.println("Create folder");
             });
 
             folderStatusLabel.setText("");
@@ -161,7 +164,12 @@ public class InboxView implements SofView {
             folderObservableList.clear();
             ArrayList<Folder> folders = task.getValue();
 
-            folderObservableList.addAll(folders);
+            ArrayList<Pair<Folder, Boolean>> folderPairs = new ArrayList<>();
+            for (Folder folder : folders)
+                folderPairs.add(new Pair<>(folder, false));
+
+            folderObservableList.addAll(folderPairs);
+            folderObservableList.add(new Pair<>(null, true)); // special case for the "Create folder" cell
 
             folderStatusLabel.setText("");
         });
