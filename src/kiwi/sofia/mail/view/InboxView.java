@@ -3,8 +3,10 @@ package kiwi.sofia.mail.view;
 import jakarta.mail.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -13,6 +15,7 @@ import javafx.scene.layout.StackPane;
 import kiwi.sofia.mail.common.ImapManager;
 import kiwi.sofia.mail.common.NoSelectionModel;
 import kiwi.sofia.mail.common.Pair;
+import kiwi.sofia.mail.task.CreateFolderTask;
 import kiwi.sofia.mail.task.FetchEmailsTask;
 import kiwi.sofia.mail.task.GetFoldersTask;
 import kiwi.sofia.mail.template.EmailCell;
@@ -80,10 +83,13 @@ public class InboxView implements SofView {
             folderListView.setItems(folderObservableList);
             folderListView.setCellFactory(param -> new FolderCell());
             folderListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue == null)
+                    return;
+
                 if (!newValue.getB())
                     showFolder(newValue.getA()); // TODO: make it clear which inbox you've selected
                 else
-                    System.out.println("Create folder");
+                    createFolder();
             });
 
             folderStatusLabel.setText("");
@@ -286,5 +292,21 @@ public class InboxView implements SofView {
     @FXML
     private void actionCompose() {
         AuthorView.show();
+    }
+
+    /**
+     * Creates a new folder with the user's input.
+     */
+    private void createFolder() {
+        CreateFolderTask task = CreateFolderTask.startWizard();
+        task.setOnSucceeded(event -> fetchFolders());
+
+        task.setOnFailed(event -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Failed to create folder");
+            alert.setHeaderText(null);
+            alert.setContentText(task.getException().getMessage());
+            alert.showAndWait();
+        });
     }
 }
