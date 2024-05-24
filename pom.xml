@@ -120,6 +120,14 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <!-- I've absolutely no idea what this does, but this king on GitHub suggested it -->
+                    <!-- https://github.com/kordamp/ikonli/issues/34#issuecomment-449964123 -->
+                    <transformers>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    </transformers>
+                </configuration>
             </plugin>
         </plugins>
 
