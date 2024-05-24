@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.print.PrinterJob;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
@@ -115,12 +116,17 @@ public class EmailView implements SofView {
         new Thread(buttonsTask).start();
 
         try {
-            // Set the name, email and subject labels
+            // Set the name, email and subject labels & tooltips
             String regex = "\"?(.+?)\"? (<.+>)"; // Matches "Name" <email>, without quotes including angle brackets
             String from = message.getFrom()[0].toString();
-            senderLabel.setText(from.replaceAll(regex, "$1")); // name (without surrounding quotes)
-            emailLabel.setText(from.replaceAll(regex, "$2")); // <email>
+            String name = from.replaceAll(regex, "$1"); // name (without surrounding quotes)
+            String email = from.replaceAll(regex, "$2"); // <email>
+            senderLabel.setText(name);
+            senderLabel.setTooltip(new Tooltip(name));
+            emailLabel.setText(email);
+            emailLabel.setTooltip(new Tooltip(email));
             subjectLabel.setText(message.getSubject());
+            subjectLabel.setTooltip(new Tooltip(message.getSubject()));
 
             // Parse dates
             Locale locale = new Locale("en", "US");
