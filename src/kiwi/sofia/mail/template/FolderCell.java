@@ -21,11 +21,6 @@ public class FolderCell extends ListCell<Folder> implements SofView {
     private Label folderLabel;
     @FXML
     private FontIcon icon;
-    
-    /**
-     * The folder of this cell.
-     */
-    private Folder folder;
 
     @Override
     protected void updateItem(Folder folder, boolean empty) {
@@ -38,8 +33,7 @@ public class FolderCell extends ListCell<Folder> implements SofView {
             loader.setController(this);
             loader.load();
 
-            this.folder = folder;
-            String pattern = "\\[Gmail\\]\\/(.+)";
+            String pattern = "\\[Gmail\\]\\/(.+)"; // Matches [Gmail]/(folderName)
             String folderName = folder.getFullName();
 
             // Special case for Gmail folders & INBOX
@@ -49,24 +43,7 @@ public class FolderCell extends ListCell<Folder> implements SofView {
                 else
                     folderName = folderName.replaceAll(pattern, "$1"); // remove the [Gmail]/ prefix
 
-
-                // Set icon based on folder name
-                if (folderName.equalsIgnoreCase("all mail"))
-                    icon.setIconLiteral("fa-envelope-o");
-                else if (folderName.equalsIgnoreCase("drafts"))
-                    icon.setIconLiteral("fa-file-o");
-                else if (folderName.equalsIgnoreCase("sent mail"))
-                    icon.setIconLiteral("fa-paper-plane-o");
-                else if (folderName.equalsIgnoreCase("spam"))
-                    icon.setIconLiteral("fa-exclamation");
-                else if (folderName.equalsIgnoreCase("starred"))
-                    icon.setIconLiteral("fa-star-o");
-                else if (folderName.equalsIgnoreCase("trash"))
-                    icon.setIconLiteral("fa-trash-o");
-                else if (folderName.equalsIgnoreCase("important"))
-                    icon.setIconLiteral("fa-bookmark-o");
-                else if (folderName.equalsIgnoreCase("inbox"))
-                    icon.setIconLiteral("fa-inbox");
+                setFolderIcon(folderName);
             }
 
             folderLabel.setText(folderName);
@@ -76,6 +53,30 @@ public class FolderCell extends ListCell<Folder> implements SofView {
         } catch (Exception e) {
             System.out.println("Failed to load FolderCell.fxml: " + e.getMessage());
         }
+    }
+
+    /**
+     * Sets the icon of Gmail & INBOX-folders based on their name.
+     *
+     * @param folderName The name of the folder.
+     */
+    private void setFolderIcon(String folderName) {
+        if (folderName.equalsIgnoreCase("all mail"))
+            icon.setIconLiteral("fa-envelope-o");
+        else if (folderName.equalsIgnoreCase("drafts"))
+            icon.setIconLiteral("fa-file-o");
+        else if (folderName.equalsIgnoreCase("sent mail"))
+            icon.setIconLiteral("fa-paper-plane-o");
+        else if (folderName.equalsIgnoreCase("spam"))
+            icon.setIconLiteral("fa-exclamation");
+        else if (folderName.equalsIgnoreCase("starred"))
+            icon.setIconLiteral("fa-star-o");
+        else if (folderName.equalsIgnoreCase("trash"))
+            icon.setIconLiteral("fa-trash-o");
+        else if (folderName.equalsIgnoreCase("important"))
+            icon.setIconLiteral("fa-bookmark-o");
+        else if (folderName.equalsIgnoreCase("inbox"))
+            icon.setIconLiteral("fa-inbox");
     }
 
     @Override
