@@ -34,6 +34,7 @@ public class PropertiesCreator {
         properties.put("mail.imap.host", set.host());
         properties.put("mail.imap.port", set.port());
         properties.put("mail.imap.ssl.enable", "true");
+        properties.put("mail.imap.fetchsize", "8192000"); // 8 MB
 
         return properties;
     }
