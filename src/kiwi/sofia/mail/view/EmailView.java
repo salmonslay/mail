@@ -121,10 +121,13 @@ public class EmailView implements SofView {
             String from = message.getFrom()[0].toString();
             String name = from.replaceAll(regex, "$1"); // name (without surrounding quotes)
             String email = from.replaceAll(regex, "$2"); // <email>
+
             senderLabel.setText(name);
             senderLabel.setTooltip(new Tooltip(name));
+
             emailLabel.setText(email);
             emailLabel.setTooltip(new Tooltip(email));
+
             subjectLabel.setText(message.getSubject());
             subjectLabel.setTooltip(new Tooltip(message.getSubject()));
 
