@@ -192,9 +192,8 @@ public class BodyParser {
             for (int i = 0; i < multipart.getCount(); i++) {
                 BodyPart part = multipart.getBodyPart(i);
                 String contentType = part.getContentType().toLowerCase();
-
                 if (part.isMimeType("multipart/alternative") || part.isMimeType("multipart/related"))
-                    startFrom += attachmentCount(part, startFrom);
+                    startFrom += attachmentCount(part.getContent(), startFrom);
                 else if (contentType.contains("name="))
                     startFrom++;
             }
