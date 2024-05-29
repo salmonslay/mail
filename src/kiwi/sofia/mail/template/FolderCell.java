@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.Pane;
+import kiwi.sofia.mail.common.FolderActions;
 import kiwi.sofia.mail.common.Pair;
 import kiwi.sofia.mail.view.SofView;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -37,7 +38,7 @@ public class FolderCell extends ListCell<Pair<Folder, Boolean>> implements SofVi
 
             if (folderPair.getB()) { // Special case for the "Create folder" cell
                 folderLabel.setText("Create folder");
-                setFolderIcon("new");
+                icon.setIconLiteral(FolderActions.getIconLiteral("new"));
                 setGraphic(rootPane);
                 return;
             }
@@ -52,7 +53,7 @@ public class FolderCell extends ListCell<Pair<Folder, Boolean>> implements SofVi
                 else
                     folderName = folderName.replaceAll(pattern, "$1"); // remove the [Gmail]/ prefix
 
-                setFolderIcon(folderName);
+                icon.setIconLiteral(FolderActions.getIconLiteral(folderName));
             }
 
             folderLabel.setText(folderName);
@@ -62,32 +63,6 @@ public class FolderCell extends ListCell<Pair<Folder, Boolean>> implements SofVi
         } catch (Exception e) {
             System.out.println("Failed to load FolderCell.fxml: " + e.getMessage());
         }
-    }
-
-    /**
-     * Sets the icon of Gmail & INBOX-folders based on their name.
-     *
-     * @param folderName The name of the folder.
-     */
-    private void setFolderIcon(String folderName) {
-        if (folderName.equalsIgnoreCase("all mail"))
-            icon.setIconLiteral("fa-envelope-o");
-        else if (folderName.equalsIgnoreCase("drafts"))
-            icon.setIconLiteral("fa-file-o");
-        else if (folderName.equalsIgnoreCase("sent mail"))
-            icon.setIconLiteral("fa-paper-plane-o");
-        else if (folderName.equalsIgnoreCase("spam"))
-            icon.setIconLiteral("fa-exclamation");
-        else if (folderName.equalsIgnoreCase("starred"))
-            icon.setIconLiteral("fa-star-o");
-        else if (folderName.equalsIgnoreCase("trash"))
-            icon.setIconLiteral("fa-trash-o");
-        else if (folderName.equalsIgnoreCase("important"))
-            icon.setIconLiteral("fa-bookmark-o");
-        else if (folderName.equalsIgnoreCase("inbox"))
-            icon.setIconLiteral("fa-inbox");
-        else if (folderName.equalsIgnoreCase("new"))
-            icon.setIconLiteral("fa-plus");
     }
 
     @Override

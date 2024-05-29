@@ -8,9 +8,7 @@ import jakarta.mail.MessagingException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.print.PrinterJob;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
@@ -188,15 +186,30 @@ public class EmailView implements SofView {
 
     @FXML
     private void actionMoveEmail() {
-        try {
-            IMAPFolder folder = (IMAPFolder) message.getFolder();
-            Folder dest = ImapManager.getCachedStore().getFolder("Outlook");
+        String folderName = FolderActions.askUserForFolder("Move email", "Select a folder to move the email to:", true);
+        if (folderName == null)
+            return;
 
-            folder.open(Folder.READ_WRITE);
-            dest.open(Folder.READ_WRITE);
-            folder.moveMessages(new Message[]{message}, dest);
+        try {
+            IMAPFolder sourceFolder = (IMAPFolder) message.getFolder();
+            Folder destFolder = ImapManager.getCachedStore().getFolder(folderName);
+
+            // open them if they're not already open
+            if (!sourceFolder.isOpen())
+                sourceFolder.open(Folder.READ_WRITE);
+            if (!destFolder.isOpen())
+                destFolder.open(Folder.READ_WRITE);
+
+            // move
+            sourceFolder.copyMessages(new Message[]{message}, destFolder);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            System.out.println("Failed to move email: " + e.getMessage());
+
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setTitle("Failed to move email");
+            errorAlert.setHeaderText(null);
+            errorAlert.setContentText("Failed to move email: " + e.getMessage());
+            errorAlert.showAndWait();
         }
     }
 

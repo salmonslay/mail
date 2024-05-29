@@ -310,4 +310,14 @@ public class InboxView implements SofView {
             alert.showAndWait();
         });
     }
+
+    public static ArrayList<String> getFolderNames() {
+        ArrayList<String> folderNames = new ArrayList<>();
+        for (Pair<Folder, Boolean> pair : getInstance().folderObservableList) {
+            if (pair.getA() != null && !pair.getB()) {
+                folderNames.add(pair.getA().getFullName());
+            }
+        }
+        return folderNames;
+    }
 }

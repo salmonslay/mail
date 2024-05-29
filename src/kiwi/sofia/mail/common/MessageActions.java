@@ -6,10 +6,18 @@ import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ListView;
 import kiwi.sofia.mail.view.ClientView;
 import kiwi.sofia.mail.view.InboxView;
 
 public class MessageActions {
+    /**
+     * Flag or unflag a message. Not blocking.
+     *
+     * @param message The message to flag
+     * @param flag    The flag to set
+     * @param set     Whether to set or unset the flag
+     */
     public static void flagMessage(Message message, Flags.Flag flag, boolean set) {
         Task<Void> flagTask = new Task<>() {
             @Override
@@ -32,6 +40,12 @@ public class MessageActions {
         new Thread(flagTask).start();
     }
 
+    /**
+     * This method will ask the user for confirmation and then delete a message.
+     * It will also move the message to the trash folder if it exists.
+     *
+     * @param message The message to delete
+     */
     public static void askAndTrashMessage(Message message) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete email");
