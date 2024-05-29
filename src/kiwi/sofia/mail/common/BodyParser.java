@@ -26,8 +26,9 @@ public class BodyParser {
      * @return The body of the email and its content type.
      */
     public static Pair<String, String> parse(Object body, boolean getHtml) {
-        if (body instanceof String) {
-            return new Pair<>((String) body, "text/plain");
+        if (body instanceof String content) {
+            String contentType = content.contains("<html") ? "text/html" : "text/plain";
+            return new Pair<>(content, contentType);
         } else if (body instanceof Multipart) {
             StringBuilder plainText = new StringBuilder();
             StringBuilder html = new StringBuilder();
