@@ -295,11 +295,12 @@ public class InboxView implements SofView {
     }
 
     /**
-     * Creates a new folder with the user's input.
+     * Starts the process to create a new folder with the user's input.
+     * Will refresh the folder list on success.
      */
-    private void createFolder() {
+    public static void createFolder() {
         CreateFolderTask task = CreateFolderTask.startWizard();
-        task.setOnSucceeded(event -> fetchFolders());
+        task.setOnSucceeded(event -> getInstance().fetchFolders());
 
         task.setOnFailed(event -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);

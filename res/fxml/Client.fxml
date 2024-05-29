@@ -47,7 +47,7 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#actionWriteEmail" text="Compose">
+                        <MenuItem mnemonicParsing="false" onAction="#actionWriteEmail" text="New email...">
                             <graphic>
                                 <StackedFontIcon>
                                     <children>
@@ -65,6 +65,15 @@
                                 </StackedFontIcon>
                             </graphic>
                         </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#actionCreateFolder" text="Create folder">
+                     <graphic>
+                        <StackedFontIcon>
+                           <children>
+                              <FontIcon iconLiteral="fa-bookmark" />
+                           </children>
+                        </StackedFontIcon>
+                     </graphic>
+                  </MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#actionQuit" text="Quit">
                             <graphic>

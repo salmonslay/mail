@@ -67,4 +67,9 @@ public class ClientView implements SofView {
     public void actionOpenInbox() {
         showInbox();
     }
+
+    @FXML
+    public void actionCreateFolder() {
+        InboxView.createFolder();
+    }
 }
