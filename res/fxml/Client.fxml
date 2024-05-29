@@ -47,20 +47,20 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#actionWriteEmail" text="Compose">
+                            <graphic>
+                                <StackedFontIcon>
+                                    <children>
+                                        <FontIcon iconLiteral="fa-pencil" />
+                                    </children>
+                                </StackedFontIcon>
+                            </graphic>
+                        </MenuItem>
                         <MenuItem mnemonicParsing="false" onAction="#actionOpenInbox" text="Open inbox">
                             <graphic>
                                 <StackedFontIcon>
                                     <children>
                                         <FontIcon iconLiteral="fa-inbox" />
-                                    </children>
-                                </StackedFontIcon>
-                            </graphic>
-                        </MenuItem>
-                        <MenuItem mnemonicParsing="false" onAction="#actionWriteEmail" text="Write email">
-                            <graphic>
-                                <StackedFontIcon>
-                                    <children>
-                                        <FontIcon iconLiteral="fa-pencil" />
                                     </children>
                                 </StackedFontIcon>
                             </graphic>
