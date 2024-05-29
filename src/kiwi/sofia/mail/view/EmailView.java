@@ -5,6 +5,7 @@ import jakarta.mail.Flags;
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.print.PrinterJob;
@@ -190,27 +191,46 @@ public class EmailView implements SofView {
         if (folderName == null)
             return;
 
-        try {
-            IMAPFolder sourceFolder = (IMAPFolder) message.getFolder();
-            Folder destFolder = ImapManager.getCachedStore().getFolder(folderName);
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws MessagingException {
+                IMAPFolder sourceFolder = (IMAPFolder) message.getFolder();
+                Folder destFolder = ImapManager.getCachedStore().getFolder(folderName);
 
-            // open them if they're not already open
-            if (!sourceFolder.isOpen())
-                sourceFolder.open(Folder.READ_WRITE);
-            if (!destFolder.isOpen())
-                destFolder.open(Folder.READ_WRITE);
+                // open them if they're not already open
+                if (!sourceFolder.isOpen())
+                    sourceFolder.open(Folder.READ_WRITE);
+                if (!destFolder.isOpen())
+                    destFolder.open(Folder.READ_WRITE);
 
-            // move
-            sourceFolder.copyMessages(new Message[]{message}, destFolder);
-        } catch (MessagingException e) {
-            System.out.println("Failed to move email: " + e.getMessage());
+                // move
+                sourceFolder.copyMessages(new Message[]{message}, destFolder);
+
+                return null;
+            }
+        };
+
+        task.setOnFailed(event -> {
+            System.out.println("Failed to move email: " + task.getException().getMessage());
 
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
             errorAlert.setTitle("Failed to move email");
             errorAlert.setHeaderText(null);
-            errorAlert.setContentText("Failed to move email: " + e.getMessage());
+            errorAlert.setContentText("Failed to move email: " + task.getException().getMessage());
             errorAlert.showAndWait();
-        }
+        });
+
+        task.setOnSucceeded(event -> {
+            InboxView.getInstance().fetchEmails();
+
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+            successAlert.setTitle("Email moved");
+            successAlert.setHeaderText(null);
+            successAlert.setContentText("The email has been successfully moved.");
+            successAlert.showAndWait();
+        });
+
+        new Thread(task).start();
     }
 
     @FXML
