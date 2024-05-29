@@ -204,7 +204,7 @@
                               </StackedFontIcon>
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Print message" />
+                              <Tooltip text="Move message" />
                            </tooltip>
                            <FlowPane.margin>
                               <Insets left="4.0" right="4.0" />
