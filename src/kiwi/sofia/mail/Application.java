@@ -38,13 +38,5 @@ public class Application extends javafx.application.Application {
         stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
-
-        stage.widthProperty().addListener((obs, oldVal, newVal) -> {
-            root.setPrefWidth((double) newVal);
-        });
-
-        stage.heightProperty().addListener((obs, oldVal, newVal) -> {
-            root.setPrefHeight((double) newVal);
-        });
     }
 }
