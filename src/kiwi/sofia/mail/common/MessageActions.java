@@ -63,11 +63,15 @@ public class MessageActions {
             }
         };
 
+        // sometimes this task fails but the message is still deleted, no idea why
         deleteTask.setOnFailed(e -> {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
             errorAlert.setTitle("Failed to delete email");
             errorAlert.setHeaderText(null);
-            errorAlert.setContentText(deleteTask.getException().getMessage());
+            String errorMessage = deleteTask.getException().getMessage();
+            if (errorMessage.isBlank())
+                errorMessage = "Could not get an error message, but it's possible that the email was deleted regardless. JavaMail is not very reliable.";
+            errorAlert.setContentText(errorMessage);
             errorAlert.showAndWait();
         });
 
