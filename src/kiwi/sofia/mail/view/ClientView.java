@@ -59,12 +59,6 @@ public class ClientView implements SofView {
     }
 
     @FXML
-    public void actionLogOut() {
-        LoginView.clearCredentials();
-        rootPane.getScene().setRoot(new LoginView().getView());
-    }
-
-    @FXML
     public void actionQuit() {
         System.exit(0);
     }
