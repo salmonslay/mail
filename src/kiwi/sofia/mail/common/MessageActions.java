@@ -6,6 +6,7 @@ import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
+import kiwi.sofia.mail.view.ClientView;
 import kiwi.sofia.mail.view.InboxView;
 
 public class MessageActions {
@@ -72,6 +73,7 @@ public class MessageActions {
 
         deleteTask.setOnSucceeded(e -> {
             InboxView.getInstance().fetchEmails();
+            ClientView.showInbox();
 
             Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
             successAlert.setTitle("Email deleted");
