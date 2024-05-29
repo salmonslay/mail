@@ -27,6 +27,8 @@ public class BodyParser {
      */
     public static Pair<String, String> parse(Object body, boolean getHtml) {
         if (body instanceof String content) {
+            // String content can be both html or plain text, so we check for <html to determine content type
+            // It's not perfect, but it's the best we can do without a content type
             String contentType = content.contains("<html") ? "text/html" : "text/plain";
             return new Pair<>(content, contentType);
         } else if (body instanceof Multipart) {
