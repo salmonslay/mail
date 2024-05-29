@@ -108,7 +108,7 @@
          <children>
             <BorderPane prefHeight="48.0" prefWidth="200.0">
                <left>
-                  <Label fx:id="subjectLabel" text="Subject" BorderPane.alignment="CENTER">
+                  <Label fx:id="subjectLabel" maxWidth="850.0" text="Subject" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets left="86.0" top="4.0" />
                      </BorderPane.margin>
