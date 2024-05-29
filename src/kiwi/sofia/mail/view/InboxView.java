@@ -3,7 +3,6 @@ package kiwi.sofia.mail.view;
 import jakarta.mail.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;

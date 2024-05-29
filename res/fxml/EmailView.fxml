@@ -14,6 +14,7 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import org.kordamp.ikonli.javafx.StackedFontIcon?>
 
+<!--suppress ALL -->
 <BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <StackPane>

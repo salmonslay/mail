@@ -6,7 +6,6 @@ import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ListView;
 import kiwi.sofia.mail.view.ClientView;
 import kiwi.sofia.mail.view.InboxView;
 

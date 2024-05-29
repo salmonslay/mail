@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class GetFoldersTask extends Task<ArrayList<Folder>> {
     @Override
-    protected ArrayList<Folder> call() throws Exception {
+    protected ArrayList<Folder> call() {
         Folder[] folders = ImapManager.getFolders();
 
         if (folders == null) {
