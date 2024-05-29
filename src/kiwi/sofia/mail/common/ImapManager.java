@@ -21,7 +21,8 @@ public class ImapManager {
             Store store = getCachedStore();
             Folder folder = store.getFolder(folderName);
 
-            folder.open(Folder.READ_WRITE);
+            if (!folder.isOpen())
+                folder.open(Folder.READ_WRITE);
             ImapManager.folders.put(folderName, folder);
             return new Pair<>(folder, null);
         } catch (MessagingException e) {
